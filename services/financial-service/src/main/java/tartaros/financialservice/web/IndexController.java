@@ -10,14 +10,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import tartaros.financialservice.db.entity.ActivityTransaction;
+import tartaros.financialservice.db.entity.Transaction;
 import tartaros.financialservice.db.entity.TransactionWrapper;
 import tartaros.financialservice.db.entity.WebshopTransaction;
+import tartaros.financialservice.db.repository.TransactionRepository;
 import tartaros.financialservice.db.service.TransactionService;
 
-@Controller
+@RestController
 public class IndexController {
 
     @Autowired private TransactionService transactionService;
+
+    @Autowired private TransactionRepository transactionRepository;
 
     @GetMapping("/transaction")
     public void getAllTransactions() {
@@ -28,7 +32,12 @@ public class IndexController {
     }
 
     @GetMapping("/transaction/activity")
-    public void getAllActivityTransactions() {
+    public String getAllActivityTransactions() {
+        StringBuilder result = new StringBuilder();
+        for (Transaction transaction : transactionRepository.findAll()) {
+            result.append(transaction.toString());
+        }
+        return result.toString();
     }
 
     @GetMapping("/transaction/webshop")

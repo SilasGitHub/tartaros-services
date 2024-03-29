@@ -1,13 +1,18 @@
 package tartaros.activityservice.activity;
 
-import org.jobrunr.jobs.annotations.Job;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-import org.jobrunr.scheduling.cron.Cron;
+import tartaros.activityservice.transaction.Transaction;
+import tartaros.activityservice.transaction.TransactionType;
+import tartaros.activityservice.transaction.TransactionWrapper;
 
 
 import java.time.LocalDateTime;
@@ -24,6 +29,9 @@ class ActivityController {
 
     @Autowired
     private GoogleClient googleClient;
+
+    @Autowired
+    private JmsTemplate jmsTemplate;
 
     public ActivityController(ActivityRepository activityRepository) {
         this.activityRepository = activityRepository;
@@ -53,11 +61,29 @@ class ActivityController {
     }
 
     public void activityDeadline() {
-        System.out.println("test");
         Flux<Activity> activities = Flux.fromIterable(activityRepository.findAll()).filter(activity -> activity.getSignUpDeadline().isBefore(LocalDateTime.now()));
+        int i = 0;
         for (Activity activity : activities.toIterable()) {
             googleClient.getNumberOfResponses(activity.getExternalId());
+            Transaction transaction = new Transaction();
+            transaction.setAmount(activity.getPrice());
+            transaction.setMemberId((long) i);
+            transaction.setDescription("Test transaction");
+            transaction.setPaid(false);
+            TransactionType transactionType = new TransactionType();
+            transactionType.setActivityId((long) i);
+            i++;
+            TransactionWrapper transactionWrapper = new TransactionWrapper();
+            transactionWrapper.setTransaction(transaction);
+            transactionWrapper.setTransaction_type(transactionType);
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            try {
+                String json = ow.writeValueAsString(transactionWrapper);
+                jmsTemplate.convertAndSend("transactions", json);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
-        System.out.println("Create transaction here");
+
     }
 }

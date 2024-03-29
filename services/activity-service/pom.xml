@@ -63,11 +63,9 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.jobrunr/jobrunr -->
         <dependency>
-            <groupId>org.jobrunr</groupId>
-            <artifactId>jobrunr</artifactId>
-            <version>6.3.5</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
         </dependency>
     </dependencies>
 

@@ -9,7 +9,7 @@ import lombok.*;
 
 @Entity
 @Data
-@Table(name="membership_transaction")
+@Table(name="activity_transaction")
 @NoArgsConstructor
 @Getter
 @Setter
