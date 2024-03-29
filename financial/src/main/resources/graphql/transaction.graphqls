@@ -1,0 +1,16 @@
+scalar UUID
+type Transaction {
+	transaction_id: ID!
+	member_id: ID!
+	amount: Float!
+}
+
+# Root
+type Query {
+	findAllTransactions: [Transaction]!
+}
+
+# Root
+type Mutation {
+	createTransaction(member_id: UUID!, amount: Float!): Transaction!
+}
