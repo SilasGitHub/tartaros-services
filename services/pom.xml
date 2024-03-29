@@ -14,5 +14,6 @@
         <module>google-service</module>
         <module>ui-service</module>
         <module>auth-service</module>
+        <module>financial-service</module>
     </modules>
 </project>
