@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import tartaros.activityservice.transaction.Transaction;
@@ -30,8 +29,6 @@ class ActivityController {
     @Autowired
     private GoogleClient googleClient;
 
-    @Autowired
-    private JmsTemplate jmsTemplate;
 
     public ActivityController(ActivityRepository activityRepository) {
         this.activityRepository = activityRepository;
@@ -79,7 +76,6 @@ class ActivityController {
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             try {
                 String json = ow.writeValueAsString(transactionWrapper);
-                jmsTemplate.convertAndSend("transactions", json);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
