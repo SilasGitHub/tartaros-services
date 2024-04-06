@@ -1,0 +1,56 @@
+x-common-variables: &common-env-vars
+  PORT_DB: ${PORT_DB}
+  PORT_API: ${PORT_API}
+  PORT_RABBITMQ: ${PORT_RABBITMQ}
+  PORT_DISCOVERY: ${PORT_DISCOVERY}
+  MYSQL_HOST: mysql
+  DISCOVERY_HOST: discovery
+  RABBITMQ_HOST: rabbitmq
+
+services:
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: ${ACTIVITY_MYSQL_DATABASE}
+      MYSQL_USER: ${ACTIVITY_MYSQL_USER}
+      MYSQL_PASSWORD: ${ACTIVITY_MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${ACTIVITY_MYSQL_ROOT_PASSWORD}
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "15672:15672"
+  discovery:
+    build: discovery-service
+  gateway:
+    depends_on:
+      - discovery
+    build: api-gateway
+    ports:
+      - "${PORT_API}:${PORT_API}"
+    environment:
+      <<: *common-env-vars
+  activity:
+    depends_on:
+      - mysql
+      - rabbitmq
+      - discovery
+    build: activity-service
+    environment:
+      <<: *common-env-vars
+      MYSQL_DATABASE: ${ACTIVITY_MYSQL_DATABASE}
+      MYSQL_USER: ${ACTIVITY_MYSQL_USER}
+      MYSQL_PASSWORD: ${ACTIVITY_MYSQL_PASSWORD}
+  google:
+    depends_on:
+      - discovery
+    build: google-service
+    environment:
+      <<: *common-env-vars
+  ui:
+    depends_on:
+      - discovery
+    build: ui-service
+    environment:
+      <<: *common-env-vars
