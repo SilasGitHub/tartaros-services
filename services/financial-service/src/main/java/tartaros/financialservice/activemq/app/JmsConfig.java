@@ -15,14 +15,14 @@ import org.springframework.jms.support.converter.SimpleMessageConverter;
 @Configuration
 public class JmsConfig {
 
-    @Value("${activemq.broker-url}")
-    private String brokerUrl;
-
-    @Value("${activemq.broker-username}")
-    private String brokerUsername;
-
-    @Value("${activemq.broker-password}")
-    private String brokerPassword;
+//    @Value("${activemq.broker-url}")
+//    private String brokerUrl;
+//
+//    @Value("${activemq.broker-username}")
+//    private String brokerUsername;
+//
+//    @Value("${activemq.broker-password}")
+//    private String brokerPassword;
 
 //    @Bean
 //    public ActiveMQConnectionFactory activeMQConnectionFactory() {
