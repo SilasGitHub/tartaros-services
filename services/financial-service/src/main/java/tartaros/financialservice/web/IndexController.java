@@ -15,13 +15,14 @@ import tartaros.financialservice.db.entity.TransactionWrapper;
 import tartaros.financialservice.db.entity.WebshopTransaction;
 import tartaros.financialservice.db.repository.TransactionRepository;
 import tartaros.financialservice.db.service.TransactionService;
+import tartaros.financialservice.rabbitmq.publisher.RabbitMQProducer;
 
 @RestController
 public class IndexController {
 
     @Autowired private TransactionService transactionService;
-
     @Autowired private TransactionRepository transactionRepository;
+    @Autowired private RabbitMQProducer producer;
 
     @GetMapping("/transaction")
     public void getAllTransactions() {
@@ -46,23 +47,30 @@ public class IndexController {
 
     @PostMapping("/transaction")
     public ResponseEntity createTransaction(@RequestBody TransactionWrapper transaction) {
-        System.out.println(transaction.getTransaction());
-        System.out.println(transaction.getTransaction_type());
-        ObjectMapper jsonObjectMapper = new JsonMapper();
-        try {
-            if (transaction.getTransaction_type().get("type").asText().equals("webshop")) {
-
-                WebshopTransaction w = jsonObjectMapper.treeToValue(transaction.getTransaction_type(), WebshopTransaction.class);
-                System.out.println(w.getCount());
-
-            } else if (transaction.getTransaction_type().get("type").asText().equals("activity")) {
-                ActivityTransaction a = jsonObjectMapper.treeToValue(transaction.getTransaction_type(), ActivityTransaction.class);
-            }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
+//        System.out.println(transaction.getTransaction());
+//        System.out.println(transaction.getTransaction_type());
+//        ObjectMapper jsonObjectMapper = new JsonMapper();
+//        try {
+//            if (transaction.getTransaction_type().get("type").asText().equals("webshop")) {
+//
+//                WebshopTransaction w = jsonObjectMapper.treeToValue(transaction.getTransaction_type(), WebshopTransaction.class);
+//                System.out.println(w.getCount());
+//
+//            } else if (transaction.getTransaction_type().get("type").asText().equals("activity")) {
+//                ActivityTransaction a = jsonObjectMapper.treeToValue(transaction.getTransaction_type(), ActivityTransaction.class);
+//            }
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/rabbitmq/test")
+    public ResponseEntity<String> testRabbit(@RequestBody Transaction t) {
+        producer.sendMessage(t);
+        return ResponseEntity.ok("Message sent to rabbitmq");
+
     }
 
 
