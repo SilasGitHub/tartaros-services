@@ -60,6 +60,7 @@ class ActivityController {
         Flux<Activity> activities = Flux.fromIterable(activityRepository.findAll()).filter(activity -> activity.getSignUpDeadline().isBefore(LocalDateTime.now()));
         int i = 0;
         for (Activity activity : activities.toIterable()) {
+			googleClient.getNumberOfResponses(activity.getExternalId());
             Transaction transaction = new Transaction();
             transaction.setAmount(activity.getPrice());
             transaction.setMemberId((long) i);
