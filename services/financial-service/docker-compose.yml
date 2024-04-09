@@ -1,0 +1,19 @@
+services:
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    environment:
+      MYSQL_DATABASE: ${FINANCIAL_MYSQL_DATABASE:-financial_db}
+      MYSQL_USER: ${FINANCIAL_MYSQL_USER:-financial_user}
+      MYSQL_PASSWORD: ${FINANCIAL_MYSQL_PASSWORD:-financial_password}
+      MYSQL_ROOT_PASSWORD: ${FINANCIAL_MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"

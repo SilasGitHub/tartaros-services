@@ -21,6 +21,8 @@ services:
     image: rabbitmq:management
     ports:
       - "${PORT_RABBITMQ:-5672}:${PORT_RABBITMQ:-5672}"
+    RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ_PASS:-guest}
+    RABBITMQ_DEFAULT_USER: ${RABBIT_MQ_USER:-guest}
   discovery:
     build: discovery-service
     ports:

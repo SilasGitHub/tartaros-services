@@ -1,14 +1,12 @@
 package tartaros.activityservice.activity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import tartaros.activityservice.rabbitmq.publisher.RabbitMQProducer;
 import tartaros.activityservice.transaction.Transaction;
 import tartaros.activityservice.transaction.TransactionType;
 import tartaros.activityservice.transaction.TransactionWrapper;
@@ -29,6 +27,7 @@ class ActivityController {
     @Autowired
     private GoogleClient googleClient;
 
+    @Autowired private RabbitMQProducer producer;
 
     public ActivityController(ActivityRepository activityRepository) {
         this.activityRepository = activityRepository;
@@ -73,12 +72,7 @@ class ActivityController {
             TransactionWrapper transactionWrapper = new TransactionWrapper();
             transactionWrapper.setTransaction(transaction);
             transactionWrapper.setTransaction_type(transactionType);
-            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            try {
-                String json = ow.writeValueAsString(transactionWrapper);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+            producer.sendTransaction(transactionWrapper);
         }
 
     }
