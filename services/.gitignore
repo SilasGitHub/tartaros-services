@@ -32,3 +32,4 @@ build/
 
 application-local.properties
 cred.json
+*.env

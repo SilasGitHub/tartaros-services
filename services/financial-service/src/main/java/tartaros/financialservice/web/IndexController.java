@@ -45,34 +45,6 @@ public class IndexController {
     public void getAllWebshopTransactions() {
     }
 
-    @PostMapping("/transaction")
-    public ResponseEntity createTransaction(@RequestBody TransactionWrapper transaction) {
-//        System.out.println(transaction.getTransaction());
-//        System.out.println(transaction.getTransaction_type());
-//        ObjectMapper jsonObjectMapper = new JsonMapper();
-//        try {
-//            if (transaction.getTransaction_type().get("type").asText().equals("webshop")) {
-//
-//                WebshopTransaction w = jsonObjectMapper.treeToValue(transaction.getTransaction_type(), WebshopTransaction.class);
-//                System.out.println(w.getCount());
-//
-//            } else if (transaction.getTransaction_type().get("type").asText().equals("activity")) {
-//                ActivityTransaction a = jsonObjectMapper.treeToValue(transaction.getTransaction_type(), ActivityTransaction.class);
-//            }
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
-//
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping("/rabbitmq/test")
-    public ResponseEntity<String> testRabbit(@RequestBody Transaction t) {
-        producer.sendMessage(t);
-        return ResponseEntity.ok("Message sent to rabbitmq");
-
-    }
-
 
     @GetMapping("/transaction/{transactionId}")
     public void getTransactionById(@PathVariable Long transactionId) {
