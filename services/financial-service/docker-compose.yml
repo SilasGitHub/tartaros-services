@@ -5,8 +5,11 @@ services:
       - "3306:3306"
     expose:
       - "3306"
-    env_file:
-      mysql_info.env
+    environment:
+      MYSQL_DATABASE: ${FINANCIAL_MYSQL_DATABASE:-financial_db}
+      MYSQL_USER: ${FINANCIAL_MYSQL_USER:-financial_user}
+      MYSQL_PASSWORD: ${FINANCIAL_MYSQL_PASSWORD:-financial_password}
+      MYSQL_ROOT_PASSWORD: ${FINANCIAL_MYSQL_ROOT_PASSWORD:-root}
     volumes:
       - "./conf.d:/etc/mysql/conf.d:ro"
   rabbitmq:
