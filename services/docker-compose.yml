@@ -32,8 +32,9 @@ services:
     image: rabbitmq:management
     ports:
       - "${PORT_RABBITMQ:-5672}:${PORT_RABBITMQ:-5672}"
-    RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ_PASS:-guest}
-    RABBITMQ_DEFAULT_USER: ${RABBIT_MQ_USER:-guest}
+    environment:
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ_PASS:-guest}
+      RABBITMQ_DEFAULT_USER: ${RABBIT_MQ_USER:-guest}
   discovery:
     build: discovery-service
     ports:
@@ -57,6 +58,8 @@ services:
       MYSQL_DATABASE: ${ACTIVITY_MYSQL_DATABASE:-activity_db}
       MYSQL_USER: ${ACTIVITY_MYSQL_USER:-activity_user}
       MYSQL_PASSWORD: ${ACTIVITY_MYSQL_PASSWORD:-activity_password}
+      RABBITMQ_PASS: ${RABBIT_MQ_PASS:-guest}
+      RABBITMQ_USER: ${RABBIT_MQ_USER:-guest}
   financial:
     depends_on:
       - mysql_financial
@@ -68,6 +71,8 @@ services:
       MYSQL_DATABASE: ${FINANCIAL_MYSQL_DATABASE:-financial_db}
       MYSQL_USER: ${FINANCIAL_MYSQL_USER:-financial_user}
       MYSQL_PASSWORD: ${FINANCIAL_MYSQL_PASSWORD:-financial_password}
+      RABBITMQ_PASS: ${RABBIT_MQ_PASS:-guest}
+      RABBITMQ_USER: ${RABBIT_MQ_USER:-guest}
   google:
     depends_on:
       - discovery
