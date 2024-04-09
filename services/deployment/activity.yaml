@@ -36,6 +36,10 @@ spec:
               value: "5672"
             - name: RABBITMQ_HOST
               value: rabbitmq
+            - name: RABBITMQ_PASS
+              value: guest
+            - name: RABBITMQ_USER
+              value: guest
           image: dockjoep/tartaros-services:activity
           name: activity
       imagePullSecrets:
