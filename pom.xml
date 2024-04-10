@@ -8,12 +8,12 @@
     <packaging>pom</packaging>
     <name>reactive-parent</name>
     <modules>
-        <module>discovery-service</module>
-        <module>activity-service</module>
-        <module>api-gateway</module>
-        <module>google-service</module>
-        <module>ui-service</module>
-        <module>auth-service</module>
-        <module>financial-service</module>
+        <module>services/discovery-service</module>
+        <module>services/activity-service</module>
+        <module>services/api-gateway</module>
+        <module>services/google-service</module>
+        <module>services/ui-service</module>
+        <module>services/auth-service</module>
+        <module>services/financial-service</module>
     </modules>
 </project>
