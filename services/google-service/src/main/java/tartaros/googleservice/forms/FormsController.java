@@ -1,16 +1,12 @@
 package tartaros.googleservice.forms;
 
 import com.google.api.services.drive.model.Permission;
-import com.google.api.services.drive.model.PermissionList;
 import com.google.api.services.forms.v1.FormsScopes;
-import com.google.api.services.forms.v1.model.Form;
-import com.google.api.services.forms.v1.model.Info;
-import com.google.api.services.forms.v1.model.ListFormResponsesResponse;
+import com.google.api.services.forms.v1.model.*;
 import com.google.auth.oauth2.GoogleCredentials;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Objects;
 
 import static tartaros.googleservice.forms.Boilerplate.driveService;
@@ -29,38 +25,43 @@ public class FormsController {
         }
     }
 
-    @GetMapping("/{id}/numberOfResponses")
-    private static int numberOfResponses(@PathVariable("id") String formId) throws IOException {
-        String token = getAccessToken();
+    @GetMapping("/{id}/responses")
+    private static Iterable<FormResponse> getResponses(@PathVariable("id") String formId) throws IOException {
         ListFormResponsesResponse response = formsService.forms().responses().list(formId).setOauthToken(token).execute();
-        return response.size();
+
+        return response.getResponses();
     }
 
-    @PostMapping
-    private static String createNewForm() throws IOException {
+    @GetMapping("/{activityId}/response/{responseId}")
+    private static FormResponse getResponse(@PathVariable("activityId") String formId, @PathVariable("responseId") String responseId) throws IOException {
+        return formsService.forms().responses().get(formId, responseId).setOauthToken(token).execute();
+    }
+
+    @GetMapping("/{id}/questions")
+    private static Iterable<Item> getQuestions(@PathVariable("id") String formId) throws IOException {
+        Form form = formsService.forms().get(formId).setAccessToken(token).execute();
+        return form.getItems().stream().filter((it) -> !it.getQuestionItem().isEmpty()).toList();
+    }
+
+    @PostMapping("/{createdBy}")
+    private static String createNewForm(@PathVariable("createdBy") String createdBy) throws IOException {
         Form form = new Form();
         form.setInfo(new Info());
         form.getInfo().setTitle("New Form");
 
+        // Create the form
         form = formsService.forms().create(form)
                 .setAccessToken(token)
                 .execute();
+
+        // Allow the creator to edit the form, anyone is allowed to view it by default
+        Permission permission = new Permission().setRole("writer").setType("user").setEmailAddress(createdBy);
+        driveService.permissions()
+                .create(form.getFormId(), permission)
+                .setOauthToken(token)
+                .execute();
+
         return form.getFormId();
-    }
-
-    @PostMapping("/{id}/publish")
-    public boolean publishForm(@PathVariable("id") String formId) throws GeneralSecurityException, IOException {
-        PermissionList list = driveService.permissions().list(formId).setOauthToken(token).execute();
-
-        if (list.getPermissions().stream().filter((it) -> it.getRole().equals("reader")).findAny().isEmpty()) {
-            Permission body = new Permission();
-            body.setRole("reader");
-            body.setType("anyone");
-            driveService.permissions().create(formId, body).setOauthToken(token).execute();
-            return true;
-        }
-
-        return false;
     }
 
     public static String getAccessToken() throws IOException {

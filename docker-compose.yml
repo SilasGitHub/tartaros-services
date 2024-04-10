@@ -24,13 +24,13 @@ services:
     RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ_PASS:-guest}
     RABBITMQ_DEFAULT_USER: ${RABBIT_MQ_USER:-guest}
   discovery:
-    build: discovery-service
+    build: services/discovery-service
     ports:
       - "${PORT_DISCOVERY:-8761}:${PORT_DISCOVERY:-8761}"
   gateway:
     depends_on:
       - discovery
-    build: api-gateway
+    build: services/api-gateway
     ports:
       - "${PORT_API:-8080}:${PORT_API:-8080}"
     environment:
@@ -40,7 +40,7 @@ services:
       - mysql
       - rabbitmq
       - discovery
-    build: activity-service
+    build: services/activity-service
     environment:
       <<: *common-env-vars
       MYSQL_DATABASE: ${ACTIVITY_MYSQL_DATABASE:-activity_db}
@@ -49,12 +49,12 @@ services:
   google:
     depends_on:
       - discovery
-    build: google-service
+    build: services/google-service
     environment:
       <<: *common-env-vars
   ui:
     depends_on:
       - discovery
-    build: ui-service
+    build: services/ui-service
     environment:
       <<: *common-env-vars
