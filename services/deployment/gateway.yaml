@@ -36,6 +36,7 @@ spec:
           name: gateway
           ports:
             - containerPort: 8080
+          imagePullPolicy: Always
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

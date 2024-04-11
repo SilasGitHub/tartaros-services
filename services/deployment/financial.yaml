@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: financial
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: financial
@@ -42,6 +42,7 @@ spec:
               value: guest
           image: dockjoep/tartaros-services:financial
           name: financial
+          imagePullPolicy: Always
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

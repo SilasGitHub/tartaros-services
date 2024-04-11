@@ -34,6 +34,7 @@ spec:
               value: rabbitmq
           image: dockjoep/tartaros-services:ui
           name: ui
+          imagePullPolicy: Always
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always
