@@ -18,6 +18,7 @@ spec:
           name: services-discovery
           ports:
             - containerPort: 8761
+          imagePullPolicy: Always
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

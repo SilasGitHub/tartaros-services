@@ -15,14 +15,12 @@ import tartaros.financialservice.db.entity.TransactionWrapper;
 import tartaros.financialservice.db.entity.WebshopTransaction;
 import tartaros.financialservice.db.repository.TransactionRepository;
 import tartaros.financialservice.db.service.TransactionService;
-import tartaros.financialservice.rabbitmq.publisher.RabbitMQProducer;
 
 @RestController
 public class IndexController {
 
     @Autowired private TransactionService transactionService;
     @Autowired private TransactionRepository transactionRepository;
-    @Autowired private RabbitMQProducer producer;
 
     @GetMapping("/transaction")
     public void getAllTransactions() {
