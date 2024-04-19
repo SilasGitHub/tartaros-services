@@ -16,9 +16,10 @@ import java.util.UUID;
 @ToString
 public class Transaction implements Serializable {
     @Id
-    @GeneratedValue
-    private Long transactionId;
-    private Long memberId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "transaction_id")
+    private UUID transactionId;
+    private UUID memberId;
     private Double amount;
     private String description;
     private boolean paid = false;

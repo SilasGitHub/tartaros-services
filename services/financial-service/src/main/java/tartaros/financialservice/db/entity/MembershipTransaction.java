@@ -1,10 +1,9 @@
 package tartaros.financialservice.db.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Data
@@ -15,7 +14,6 @@ import lombok.*;
 @ToString
 public class MembershipTransaction {
     @Id
-    @GeneratedValue
-    private Long transactionId;
+    private UUID transactionId;
     private int membershipType;
 }

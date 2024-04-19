@@ -188,21 +188,34 @@ class ActivityController {
     public void activityDeadline() {
         Flux<Activity> activities = Flux.fromIterable(activityRepository.findAll()).filter(activity -> activity.getSignUpDeadline().isBefore(LocalDateTime.now()));
         int i = 0;
-        for (Activity activity : activities.toIterable()) {
-            //googleClient.getNumberOfResponses(activity.getExternalId());
-            Transaction transaction = new Transaction();
-            transaction.setAmount(activity.getPrice());
-            transaction.setMemberId((long) i);
-            transaction.setDescription("Test transaction");
-            transaction.setPaid(false);
-            TransactionType transactionType = new TransactionType();
-            transactionType.setActivityId((long) i);
-            i++;
-            TransactionWrapper transactionWrapper = new TransactionWrapper();
-            transactionWrapper.setTransaction(transaction);
-            transactionWrapper.setTransaction_type(transactionType);
-            producer.sendTransaction(transactionWrapper);
-        }
+//        for (Activity activity : activities.toIterable()) {
+//            //googleClient.getNumberOfResponses(activity.getExternalId());
+//            Transaction transaction = new Transaction();
+//            transaction.setAmount(activity.getPrice());
+//            transaction.setMemberId((long) i);
+//            transaction.setDescription("Test transaction");
+//            transaction.setPaid(false);
+//            TransactionType transactionType = new TransactionType();
+//            transactionType.setActivityId((long) i);
+//            i++;
+//            TransactionWrapper transactionWrapper = new TransactionWrapper();
+//            transactionWrapper.setTransaction(transaction);
+//            transactionWrapper.setTransaction_type(transactionType);
+//            producer.sendTransaction(transactionWrapper);
+//        }
 
+    }
+
+    @PostMapping("/activity/sendTransaction")
+    public void sendTransaction() {
+        Transaction transaction = new Transaction();
+        transaction.setAmount(100D);
+        transaction.setMemberId(UUID.randomUUID());
+        transaction.setDescription("Test transaction");
+
+        TransactionType transactionType = new TransactionType();
+        transactionType.setActivityId(UUID.randomUUID());
+        TransactionWrapper wrapper = new TransactionWrapper(transaction, transactionType);
+        producer.sendTransaction(wrapper);
     }
 }
