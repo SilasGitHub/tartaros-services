@@ -18,10 +18,8 @@ spec:
               value: discovery
             - name: MYSQL_DATABASE
               value: financial_db
-            - name: MYSQL_FINANCIAL_HOST
-              value: mysql-financial
             - name: MYSQL_HOST
-              value: mysql
+              value: mysql-financial
             - name: MYSQL_PASSWORD
               value: financial_password
             - name: MYSQL_USER
@@ -46,3 +44,60 @@ spec:
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: financial-service
+  labels:
+    app: financial-service
+spec:
+  selector:
+    app: financial
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-financial
+  labels:
+    app: mysql-financial
+spec:
+  selector:
+    matchLabels:
+      app: mysql-financial
+  template:
+    metadata:
+      labels:
+        app: mysql-financial
+    spec:
+      containers:
+        - name: mysql-financial
+          image: mysql
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_DATABASE
+              value: financial_db
+            - name: MYSQL_PASSWORD
+              value: financial_password
+            - name: MYSQL_ROOT_PASSWORD
+              value: root_password
+            - name: MYSQL_USER
+              value: financial_user
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-financial
+  labels:
+    app: mysql-financial
+spec:
+  selector:
+    app: mysql-financial
+  ports:
+    - protocol: TCP
+      port: 3306

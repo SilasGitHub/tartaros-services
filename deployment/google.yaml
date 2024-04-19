@@ -38,3 +38,17 @@ spec:
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: google-service
+  labels:
+    app: google-service
+spec:
+  selector:
+    app: google
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080

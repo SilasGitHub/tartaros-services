@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: activity
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: activity
@@ -18,10 +18,8 @@ spec:
               value: discovery
             - name: MYSQL_DATABASE
               value: activity_db
-            - name: MYSQL_FINANCIAL_HOST
-              value: mysql_financial
             - name: MYSQL_HOST
-              value: mysql
+              value: mysql-activity
             - name: MYSQL_PASSWORD
               value: activity_password
             - name: MYSQL_USER
@@ -60,3 +58,46 @@ spec:
     - name: "8080"
       port: 8080
       targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-activity
+  labels:
+    app: mysql-activity
+spec:
+  selector:
+    matchLabels:
+      app: mysql-activity
+  template:
+    metadata:
+      labels:
+        app: mysql-activity
+    spec:
+      containers:
+        - name: mysql-activity
+          image: mysql
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_DATABASE
+              value: activity_db
+            - name: MYSQL_PASSWORD
+              value: activity_password
+            - name: MYSQL_ROOT_PASSWORD
+              value: root_password
+            - name: MYSQL_USER
+              value: activity_user
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-activity
+  labels:
+    app: mysql-activity
+spec:
+  selector:
+    app: mysql-activity
+  ports:
+    - protocol: TCP
+      port: 3306

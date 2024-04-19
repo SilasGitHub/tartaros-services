@@ -38,3 +38,17 @@ spec:
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui-service
+  labels:
+    app: ui-service
+spec:
+  selector:
+    app: ui
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
