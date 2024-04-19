@@ -3,7 +3,10 @@ package tartaros.financialservice.db.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tartaros.financialservice.db.entity.ActivityTransaction;
+import tartaros.financialservice.db.entity.Transaction;
 import tartaros.financialservice.db.repository.ActivityTransactionRepository;
+
+import java.util.List;
 
 // Annotation
 @Service
@@ -14,9 +17,17 @@ public class ActivityTransactionServiceImpl
 
     @Autowired
     private ActivityTransactionRepository activityTransactionRepository;
+
     @Override
     public ActivityTransaction saveActivityTransaction(ActivityTransaction activityTransaction) {
         return activityTransactionRepository.save(activityTransaction);
+    }
+
+    // Read operation
+    @Override public List<ActivityTransaction> fetchActivityTransactionList()
+    {
+        return (List<ActivityTransaction>)
+                activityTransactionRepository.findAll();
     }
 
     @Override
