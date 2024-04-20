@@ -5,7 +5,7 @@ metadata:
     app: gateway
   name: gateway
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: gateway
@@ -54,3 +54,4 @@ spec:
       targetPort: 8080
   selector:
     app: gateway
+  type: LoadBalancer
