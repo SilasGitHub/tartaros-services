@@ -8,5 +8,5 @@ import tartaros.financialservice.db.entity.Transaction;
 import java.util.UUID;
 
 @Repository
-public interface MembershipTransactionRepository extends CrudRepository<MembershipTransaction, UUID> {
+public interface MembershipTransactionRepository extends CrudRepository<MembershipTransaction, Long> {
 }

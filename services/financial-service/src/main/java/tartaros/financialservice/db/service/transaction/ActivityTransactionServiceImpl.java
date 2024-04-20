@@ -28,4 +28,11 @@ public class ActivityTransactionServiceImpl
         return (List<ActivityTransaction>)
                 activityTransactionRepository.findAll();
     }
+
+    @Override
+    public void deleteActivityTransactionById(Long activityTransactionId) {
+        activityTransactionRepository.deleteById(activityTransactionId);
+    }
+
+
 }

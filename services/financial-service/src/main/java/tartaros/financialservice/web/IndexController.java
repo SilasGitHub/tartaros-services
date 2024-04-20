@@ -76,6 +76,21 @@ public class IndexController {
 
     @DeleteMapping("/financial/transaction/{transactionId}")
     public ResponseEntity deleteTransactionById(@PathVariable UUID transactionId) {
+        for (MembershipTransaction m : membershipTransactionService.fetchMembershipTransactionList()) {
+            if (m.getTransaction().getTransactionId().equals(transactionId)) {
+                membershipTransactionService.deleteMembershipTransactionById(m.getMembershipTransactionId());
+            }
+        }
+        for (WebshopTransaction w : webshopTransactionService.fetchWebshopTransactionList()) {
+            if (w.getTransaction().getTransactionId().equals(transactionId)) {
+                webshopTransactionService.deleteWebshopTransactionById(w.getWebshopTransactionId());
+            }
+        }
+        for (ActivityTransaction a : activityTransactionService.fetchActivityTransactionList()) {
+            if (a.getTransaction().getTransactionId().equals(transactionId)) {
+                activityTransactionService.deleteActivityTransactionById(a.getActivityTransactionId());
+            }
+        }
         transactionService.deleteTransactionById(transactionId);
         return ResponseEntity.ok().build();
     }

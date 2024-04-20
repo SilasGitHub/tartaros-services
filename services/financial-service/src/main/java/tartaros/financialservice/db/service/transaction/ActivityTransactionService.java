@@ -14,4 +14,7 @@ public interface ActivityTransactionService {
 
     // Read operation
     List<ActivityTransaction> fetchActivityTransactionList();
+
+    // Delete operation
+    void deleteActivityTransactionById(Long activityTransactionId);
 }
