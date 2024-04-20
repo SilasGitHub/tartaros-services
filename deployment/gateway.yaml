@@ -48,9 +48,11 @@ metadata:
     app: gateway
   name: gateway
 spec:
+  selector:
+    app: gateway
+  type: LoadBalancer
   ports:
     - name: "8080"
       port: 8080
       targetPort: 8080
-  selector:
-    app: gateway
+      

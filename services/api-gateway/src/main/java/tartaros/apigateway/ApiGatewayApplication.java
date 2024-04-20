@@ -25,6 +25,8 @@ public class ApiGatewayApplication {
                         .uri("lb://activity-service"))
                 .route("google-service", r -> r.path("/google/**")
                         .uri("lb://google-service"))
+                .route("financial-service", r -> r.path("/financial/**")
+                        .uri("lb://financial-service"))
                 .route("ui-service", r -> r.path("/**")
                         .uri("lb://ui-service"))
                 .build();
