@@ -13,7 +13,13 @@ import java.util.UUID;
 @Setter
 @ToString
 public class MembershipTransaction {
+    @OneToOne(cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JoinColumn(name = "transaction_id_fk", referencedColumnName = "transaction_id")
+    private Transaction transaction;
+
     @Id
-    private UUID transactionId;
-    private int membershipType;
+    @GeneratedValue
+    private Long membershipTransactionId;
+
+    private Long membershipType;
 }

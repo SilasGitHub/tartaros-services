@@ -15,7 +15,7 @@ import java.util.UUID;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActivityTransaction {
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE, orphanRemoval = true)
     @JoinColumn(name = "transaction_id_fk", referencedColumnName = "transaction_id")
     private Transaction transaction;
 

@@ -1,8 +1,7 @@
-package tartaros.financialservice.db.service;
+package tartaros.financialservice.db.service.transaction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tartaros.financialservice.db.entity.ActivityTransaction;
 import tartaros.financialservice.db.entity.WebshopTransaction;
 import tartaros.financialservice.db.repository.WebshopTransactionRepository;
 
@@ -28,11 +27,5 @@ public class WebshopTransactionServiceImpl
     {
         return (List<WebshopTransaction>)
                 webshopTransactionRepository.findAll();
-    }
-
-    @Override
-    public void deleteTransactionById(Long transactionId) {
-        webshopTransactionRepository.deleteById(transactionId);
-
     }
 }

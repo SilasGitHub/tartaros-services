@@ -5,11 +5,12 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Data
-@Table(name="Transaction")
+@Table(name="transaction")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -23,6 +24,7 @@ public class Transaction implements Serializable {
     private Double amount;
     private String description;
     private boolean paid = false;
+    private LocalDateTime transactionTime;
 
 }
 

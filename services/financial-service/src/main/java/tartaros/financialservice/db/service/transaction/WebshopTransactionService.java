@@ -1,4 +1,4 @@
-package tartaros.financialservice.db.service;
+package tartaros.financialservice.db.service.transaction;
 
 import tartaros.financialservice.db.entity.ActivityTransaction;
 import tartaros.financialservice.db.entity.WebshopTransaction;
@@ -14,7 +14,4 @@ public interface WebshopTransactionService {
 
     // Read operation
     List<WebshopTransaction> fetchWebshopTransactionList();
-
-    // Delete operation
-    void deleteTransactionById(Long transactionId);
 }

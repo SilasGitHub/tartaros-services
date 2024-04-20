@@ -4,41 +4,37 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import tartaros.financialservice.db.entity.ActivityTransaction;
-import tartaros.financialservice.db.entity.Transaction;
-import tartaros.financialservice.db.entity.TransactionWrapper;
-import tartaros.financialservice.db.entity.WebshopTransaction;
-import tartaros.financialservice.db.repository.ActivityTransactionRepository;
-import tartaros.financialservice.db.repository.TransactionRepository;
-import tartaros.financialservice.db.service.ActivityTransactionService;
-import tartaros.financialservice.db.service.TransactionService;
+import tartaros.financialservice.db.entity.*;
+import tartaros.financialservice.db.service.membership.MembershipService;
+import tartaros.financialservice.db.service.membership.MembershipTypeService;
+import tartaros.financialservice.db.service.transaction.ActivityTransactionService;
+import tartaros.financialservice.db.service.transaction.MembershipTransactionService;
+import tartaros.financialservice.db.service.transaction.TransactionService;
+import tartaros.financialservice.db.service.transaction.WebshopTransactionService;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class IndexController {
 
     @Autowired private TransactionService transactionService;
     @Autowired private ActivityTransactionService activityTransactionService;
-    @Autowired private TransactionRepository transactionRepository;
-    @Autowired private ActivityTransactionRepository activityTransactionRepository;
+    @Autowired private WebshopTransactionService webshopTransactionService;
+    @Autowired private MembershipTransactionService membershipTransactionService;
+    @Autowired private MembershipService membershipService;
+    @Autowired private MembershipTypeService membershipTypeService;
 
-    @GetMapping("/transaction")
-    public void getAllTransactions() {
+
+    @GetMapping("/financial/transaction")
+    public List<Transaction> getAllTransactions() {
+        return transactionService.fetchTransactionList();
     }
 
-    @GetMapping("/transaction/membership")
-    public void getAllMembershipTransactions() {
-    }
-
-    @PostMapping("/financial/activity")
-    public TransactionWrapper createActivityTranaction(@RequestBody TransactionWrapper wrapper) {
+    @PostMapping("/financial/transaction/activity")
+    public TransactionWrapper createActivityTransaction(@RequestBody TransactionWrapper wrapper) {
         transactionService.saveTransaction(wrapper.getTransaction());
         ObjectMapper mapper = new JsonMapper();
         try {
@@ -49,80 +45,75 @@ public class IndexController {
             e.printStackTrace();
         }
         return wrapper;
-
     }
 
-    @GetMapping("/financial/activity")
-    public List<TransactionWrapper> getAllActivityTransactions() {
-        List<TransactionWrapper> wrappers = new ArrayList<>();
-        Iterable<ActivityTransaction> activityTransactions= activityTransactionRepository.findAll();
-        Iterable<Transaction> transactions= transactionRepository.findAll();
-        ObjectMapper mapper = new JsonMapper();
-
-        for (ActivityTransaction at : activityTransactions) {
-            for (Transaction t : transactions) {
-                if (t.getTransactionId() == at.getTransaction().getTransactionId()) {
-                    TransactionWrapper wrapper = new TransactionWrapper();
-                    wrapper.setTransaction(t);
-                    wrapper.setTransaction_type(mapper.valueToTree(at););
-                    wrappers.add(wrapper);
-                }
-            }
-        }
-        return wrappers;
+    @GetMapping("/financial/transaction/activity")
+    public List<ActivityTransaction> getAllActivityTransactions() {
+        return activityTransactionService.fetchActivityTransactionList();
     }
 
-    @GetMapping("/transaction/webshop")
-    public void getAllWebshopTransactions() {
+    @GetMapping("/financial/transaction/webshop")
+    public List<WebshopTransaction> getAllWebshopTransactions() {
+        return webshopTransactionService.fetchWebshopTransactionList();
     }
 
-    @GetMapping("/financial/transaction/activityTransaction")
-    public void testActivityTransaction(@RequestBody TransactionWrapper t) {
-        transactionService.saveTransaction(t.getTransaction());
-
-        if (t.getTransaction_type().get("type").asText().equals("activity")) {
-            ObjectMapper mapper = new JsonMapper();
-            try {
-                ActivityTransaction activityTransaction = mapper.treeToValue(t.getTransaction_type(), ActivityTransaction.class);
-                activityTransaction.setTransaction(t.getTransaction());
-                activityTransactionService.saveActivityTransaction(activityTransaction);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-        for (Object i : activityTransactionRepository.fetchActivityTransactions()) {
-            System.out.println(i);
-        }
+    @GetMapping("/financial/transaction/membership")
+    public List<MembershipTransaction> getAllMembershipTransactions() {
+        return membershipTransactionService.fetchMembershipTransactionList();
     }
 
 
-    @GetMapping("/transaction/{transactionId}")
-    public void getTransactionById(@PathVariable Long transactionId) {
-
+    @GetMapping("/financial/transaction/{transactionId}")
+    public Transaction getTransactionById(@PathVariable UUID transactionId) {
+        return transactionService.getTransactionById(transactionId);
     }
 
-    @PostMapping("/membership")
-    public void createMembership() {
-
+    @PutMapping("/financial/transaction/{transactionId}")
+    public Transaction updateTransactionById(@PathVariable UUID transactionId, @RequestBody Transaction transaction) {
+        return transactionService.updateTransaction(transaction, transactionId);
     }
 
-    @PutMapping("/transaction/{transactionId}")
-    public void updateTransactionById(@PathVariable Long transactionId) {
 
+    @DeleteMapping("/financial/transaction/{transactionId}")
+    public ResponseEntity deleteTransactionById(@PathVariable UUID transactionId) {
+        transactionService.deleteTransactionById(transactionId);
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/membership/{membershipId}")
-    public void updateMembershipById(@PathVariable Long membershipId) {
-
+    @GetMapping("/financial/membership")
+    public List<Membership> getAllMemberships() {
+        return membershipService.fetchMembershipList();
     }
 
-    @DeleteMapping("/transaction/{transactionId}")
-    public void deleteTransactionById(@PathVariable Long transactionId) {
-
+    @PostMapping("/financial/membership")
+    public Membership createMembership(@RequestBody Membership membership) {
+        return membershipService.createMembership(membership);
     }
 
-    @DeleteMapping("/membership/{membershipId}")
-    public void deleteMembershipById(@PathVariable Long transactionId) {
-
+    @DeleteMapping("/financial/membership/{membershipId}")
+    public void deleteMembershipById(@PathVariable Long membershipId) {
+        membershipService.deleteMembershipById(membershipId);
     }
+
+    @GetMapping("/financial/membership/type")
+    public List<MembershipType> getAllMembershipTypes() {
+        return membershipTypeService.fetchMembershipTypeList();
+    }
+
+    @PostMapping("/financial/membership/type")
+    public MembershipType createMembershipType(@RequestBody MembershipType membershipType) {
+        return membershipTypeService.saveMembershipType(membershipType);
+    }
+
+    @DeleteMapping("/financial/membership/type/{membershipTypeId}")
+    public void deleteMembershipTypeById(@PathVariable Long membershipTypeId) {
+        membershipTypeService.deleteMembershipTypeById(membershipTypeId);
+    }
+
+    @PutMapping("/financial/membership/type/{membershipTypeId}")
+    public MembershipType updateMembershipTypeById(@PathVariable Long membershipTypeId, @RequestBody MembershipType membershipType) {
+        return membershipTypeService.updateMembershipType(membershipType, membershipTypeId);
+    }
+
+
 }
