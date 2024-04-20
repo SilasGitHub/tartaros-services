@@ -1,11 +1,10 @@
-package tartaros.financialservice.db.service;
+package tartaros.financialservice.db.service.transaction;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import tartaros.financialservice.db.entity.Transaction;
 import tartaros.financialservice.db.repository.TransactionRepository;
@@ -38,11 +37,20 @@ public class TransactionServiceImpl
     @Override
     public Transaction
     updateTransaction(Transaction transaction,
-                     Long transactionId)
+                     UUID transactionId)
     {
         Transaction depDB
                 = transactionRepository.findById(transactionId)
                 .get();
+
+        if (transaction.isPaid()) {
+            depDB.setPaid(
+                    transaction.isPaid());
+        }
+
+        if (Objects.nonNull(transaction.getTransactionTime())) {
+            depDB.setTransactionTime(transaction.getTransactionTime());
+        }
 
         if (Objects.nonNull(transaction.getMemberId())) {
             depDB.setMemberId(
@@ -58,9 +66,14 @@ public class TransactionServiceImpl
         return transactionRepository.save(depDB);
     }
 
+    @Override
+    public Transaction getTransactionById(UUID transactionId) {
+        return transactionRepository.findById(transactionId).get();
+    }
+
     // Delete operation
     @Override
-    public void deleteTransactionById(Long transactionId)
+    public void deleteTransactionById(UUID transactionId)
     {
         transactionRepository.deleteById(transactionId);
     }

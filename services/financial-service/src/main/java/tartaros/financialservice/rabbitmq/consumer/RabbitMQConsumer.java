@@ -12,9 +12,9 @@ import tartaros.financialservice.db.entity.ActivityTransaction;
 import tartaros.financialservice.db.entity.Transaction;
 import tartaros.financialservice.db.entity.TransactionWrapper;
 import tartaros.financialservice.db.entity.WebshopTransaction;
-import tartaros.financialservice.db.service.ActivityTransactionServiceImpl;
-import tartaros.financialservice.db.service.TransactionServiceImpl;
-import tartaros.financialservice.db.service.WebshopTransactionService;
+import tartaros.financialservice.db.service.transaction.ActivityTransactionServiceImpl;
+import tartaros.financialservice.db.service.transaction.TransactionServiceImpl;
+import tartaros.financialservice.db.service.transaction.WebshopTransactionService;
 
 @Service
 public class RabbitMQConsumer {

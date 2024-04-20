@@ -1,4 +1,4 @@
-package tartaros.financialservice.db.service;
+package tartaros.financialservice.db.service.transaction;
 
 import tartaros.financialservice.db.entity.Transaction;
 
@@ -16,8 +16,10 @@ public interface TransactionService {
 
     // Update operation
     Transaction updateTransaction(Transaction department,
-                                Long transactionId);
+                                UUID transactionId);
 
     // Delete operation
-    void deleteTransactionById(Long transactionId);
+    void deleteTransactionById(UUID transactionId);
+
+    Transaction getTransactionById(UUID transactionId);
 }
