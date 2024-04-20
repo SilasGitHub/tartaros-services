@@ -22,4 +22,9 @@ public class MembershipTransactionServiceImpl implements MembershipTransactionSe
     public List<MembershipTransaction> fetchMembershipTransactionList() {
         return (List<MembershipTransaction>) membershipTransactionRepository.findAll();
     }
+
+    @Override
+    public void deleteMembershipTransactionById(Long membershipTransactionId) {
+        membershipTransactionRepository.deleteById(membershipTransactionId);
+    }
 }

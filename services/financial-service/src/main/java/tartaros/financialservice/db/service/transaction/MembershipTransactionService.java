@@ -9,4 +9,7 @@ public interface MembershipTransactionService {
     MembershipTransaction saveMembershipTransaction(MembershipTransaction membershipTransaction);
 
     List<MembershipTransaction> fetchMembershipTransactionList();
+
+    // Delete operation
+    void deleteMembershipTransactionById(Long membershipTransactionId);
 }

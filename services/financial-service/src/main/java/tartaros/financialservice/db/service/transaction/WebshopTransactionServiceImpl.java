@@ -28,4 +28,9 @@ public class WebshopTransactionServiceImpl
         return (List<WebshopTransaction>)
                 webshopTransactionRepository.findAll();
     }
+
+    @Override
+    public void deleteWebshopTransactionById(Long webshopTransactionId) {
+        webshopTransactionRepository.deleteById(webshopTransactionId);
+    }
 }
