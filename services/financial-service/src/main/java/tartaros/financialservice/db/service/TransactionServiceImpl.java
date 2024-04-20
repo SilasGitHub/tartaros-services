@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import tartaros.financialservice.db.entity.Transaction;
 import tartaros.financialservice.db.repository.TransactionRepository;

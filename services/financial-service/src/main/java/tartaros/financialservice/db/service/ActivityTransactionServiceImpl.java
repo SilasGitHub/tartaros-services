@@ -1,11 +1,13 @@
 package tartaros.financialservice.db.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import tartaros.financialservice.db.entity.ActivityTransaction;
 import tartaros.financialservice.db.entity.Transaction;
 import tartaros.financialservice.db.repository.ActivityTransactionRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 // Annotation
@@ -29,6 +31,7 @@ public class ActivityTransactionServiceImpl
         return (List<ActivityTransaction>)
                 activityTransactionRepository.findAll();
     }
+
 
     @Override
     public void deleteTransactionById(Long transactionId) {
