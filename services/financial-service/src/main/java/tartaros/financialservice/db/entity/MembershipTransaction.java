@@ -1,10 +1,9 @@
 package tartaros.financialservice.db.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Data
@@ -14,8 +13,13 @@ import lombok.*;
 @Setter
 @ToString
 public class MembershipTransaction {
+    @OneToOne(cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JoinColumn(name = "transaction_id_fk", referencedColumnName = "transaction_id")
+    private Transaction transaction;
+
     @Id
     @GeneratedValue
-    private Long transactionId;
-    private int membershipType;
+    private UUID membershipTransactionId;
+
+    private UUID membershipTypeId;
 }

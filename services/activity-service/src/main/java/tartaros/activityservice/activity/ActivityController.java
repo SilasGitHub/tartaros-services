@@ -274,6 +274,5 @@ class ActivityController {
             activity.setProcessed(true);
             activityRepository.save(activity);
         }
-
     }
 }

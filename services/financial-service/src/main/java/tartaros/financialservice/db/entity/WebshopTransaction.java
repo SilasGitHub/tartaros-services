@@ -1,11 +1,10 @@
 package tartaros.financialservice.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Data
@@ -16,9 +15,12 @@ import lombok.*;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WebshopTransaction {
+    @OneToOne(cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JoinColumn(name = "transaction_id_fk", referencedColumnName = "transaction_id")
+    private Transaction transaction;
     @Id
     @GeneratedValue
-    private Long transactionId;
-    private Long itemId;
+    private UUID webshopTransactionId;
+    private UUID itemId;
     private int count;
 }
