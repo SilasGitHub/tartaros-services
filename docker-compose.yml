@@ -84,8 +84,6 @@ services:
       timeout: 5s
       retries: 10
   financial:
-    ports:
-      - "8086:8086"
     depends_on:
       mysql_financial:
         condition: service_healthy
