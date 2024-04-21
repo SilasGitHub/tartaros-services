@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @EnableFeignClients
+@RequestMapping("/activity")
 class ActivityController {
 
     @Autowired
@@ -40,7 +41,7 @@ class ActivityController {
         this.activityRepository = activityRepository;
     }
 
-    @PostMapping("/activity")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Activity addActivity(@CookieValue(name="jwt", defaultValue = "") String token, @RequestBody Activity activity) {
         if (!Authentication.verifyAuthentication(token, true)) {
@@ -51,7 +52,7 @@ class ActivityController {
         return activityRepository.save(activity);
     }
 
-    @GetMapping("/activity")
+    @GetMapping
     public Iterable<Activity> getActivities(@CookieValue(name="jwt", defaultValue = "") String token) {
         if (!Authentication.verifyAuthentication(token, false)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
@@ -59,7 +60,7 @@ class ActivityController {
         return activityRepository.findAll();
     }
 
-    @GetMapping("/activity/{id}")
+    @GetMapping("/{id}")
     public Activity getActivity(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id) {
         if (!Authentication.verifyAuthentication(token, false)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
@@ -73,7 +74,7 @@ class ActivityController {
         return activity.get();
     }
 
-    @GetMapping("/activity/{activityId}/response/{responseId}")
+    @GetMapping("/{activityId}/response/{responseId}")
     public FormResponse getActivityResponse(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("activityId") UUID activityId, @PathVariable("responseId") String responseId) {
         if (!Authentication.verifyAuthentication(token, false)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
@@ -103,7 +104,7 @@ class ActivityController {
         return response;
     }
 
-    @GetMapping("/activity/{id}/response")
+    @GetMapping("/{id}/response")
     public Iterable<FormResponse> getActivityResponses(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id) {
         if (!Authentication.verifyAuthentication(token, false)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
@@ -142,7 +143,7 @@ class ActivityController {
         return responses;
     }
 
-    @GetMapping("/activity/{id}/questions")
+    @GetMapping("/{id}/questions")
     public Iterable<FormQuestion> getQuestions(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id) {
         if (!Authentication.verifyAuthentication(token, false)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
@@ -154,7 +155,7 @@ class ActivityController {
         return googleClient.getQuestions(activity.get().getExternalId());
     }
 
-    @PutMapping("/activity/{id}")
+    @PutMapping("/{id}")
     public Activity updateActivity(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id, @RequestBody Activity activity) {
         if (!Authentication.verifyAuthentication(token, true)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
@@ -192,7 +193,7 @@ class ActivityController {
         return updatedActivity;
     }
 
-    @DeleteMapping("/activity/{id}")
+    @DeleteMapping("/{id}")
     public void deleteActivity(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id) {
         if (!Authentication.verifyAuthentication(token, true)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
@@ -205,7 +206,7 @@ class ActivityController {
         }
     }
 
-    @DeleteMapping("/activity/{activityId}/response/{responseId}")
+    @DeleteMapping("/{activityId}/response/{responseId}")
     public void cancelParticipation(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("activityId") UUID activityId, @PathVariable("responseId") String responseId) {
         if (!Authentication.verifyAuthentication(token, false)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
