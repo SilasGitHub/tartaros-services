@@ -243,5 +243,20 @@ class ActivityController {
     public void activityDeadline() {
         Flux<Activity> activities = Flux.fromIterable(activityRepository.findAll()).filter(activity -> activity.getSignUpDeadline().isBefore(LocalDateTime.now()));
         int i = 0;
+        for (Activity activity : activities.toIterable()) {
+            //googleClient.getNumberOfResponses(activity.getExternalId());
+            Transaction transaction = new Transaction();
+            transaction.setAmount(activity.getPrice());
+            transaction.setMemberId(UUID.randomUUID());
+            transaction.setDescription("Test transaction");
+            transaction.setPaid(false);
+            TransactionType transactionType = new TransactionType();
+            transactionType.setActivityId(UUID.randomUUID());
+            i++;
+            TransactionWrapper transactionWrapper = new TransactionWrapper();
+            transactionWrapper.setTransaction(transaction);
+            transactionWrapper.setTransaction_type(transactionType);
+            producer.sendTransaction(transactionWrapper);
+        }
     }
 }
