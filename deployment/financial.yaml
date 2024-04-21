@@ -117,13 +117,25 @@ spec:
             - containerPort: 3306
           env:
             - name: MYSQL_DATABASE
-              value: financial_db
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: FINANCIAL_MYSQL_DATABASE
             - name: MYSQL_PASSWORD
-              value: financial_password
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: FINANCIAL_MYSQL_PASSWORD
             - name: MYSQL_ROOT_PASSWORD
-              value: root_password
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: FINANCIAL_MYSQL_ROOT_PASSWORD
             - name: MYSQL_USER
-              value: financial_user
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: FINANCIAL_MYSQL_USER
 ---
 apiVersion: v1
 kind: Service
