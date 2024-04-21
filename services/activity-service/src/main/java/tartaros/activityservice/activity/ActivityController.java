@@ -18,7 +18,7 @@ import tartaros.activityservice.transaction.TransactionType;
 import tartaros.activityservice.transaction.TransactionWrapper;
 
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -241,22 +241,38 @@ class ActivityController {
     }
 
     public void activityDeadline() {
-        Flux<Activity> activities = Flux.fromIterable(activityRepository.findAll()).filter(activity -> activity.getSignUpDeadline().isBefore(LocalDateTime.now()));
-        int i = 0;
+        Flux<Activity> activities = Flux.fromIterable(activityRepository.findAll())
+                .filter(activity ->
+                        activity.getSignUpDeadline().isBefore(Instant.now()) &&
+                        !activity.isProcessed());
         for (Activity activity : activities.toIterable()) {
-            //googleClient.getNumberOfResponses(activity.getExternalId());
-            Transaction transaction = new Transaction();
-            transaction.setAmount(activity.getPrice());
-            transaction.setMemberId((long) i);
-            transaction.setDescription("Test transaction");
-            transaction.setPaid(false);
-            TransactionType transactionType = new TransactionType();
-            transactionType.setActivityId((long) i);
-            i++;
-            TransactionWrapper transactionWrapper = new TransactionWrapper();
-            transactionWrapper.setTransaction(transaction);
-            transactionWrapper.setTransaction_type(transactionType);
-            producer.sendTransaction(transactionWrapper);
+            LOGGER.info("Processing activity: " + activity.getTitle());
+            List<FormResponse> responses = googleClient.getResponses(activity.getExternalId());
+            if (responses == null) {
+                LOGGER.info("No responses found for activity: " + activity.getTitle());
+                activity.setProcessed(true);
+                activityRepository.save(activity);
+                continue;
+            }
+            responses = responses.stream().filter(
+                    response -> !activity.getDeletedResponses().contains(response.getResponseId())
+                            && Instant.parse(response.getCreateTime()).isBefore(activity.getSignUpDeadline())
+            ).toList();
+            for (FormResponse response : responses) {
+                Transaction transaction = new Transaction();
+                transaction.setAmount(activity.getPrice());
+                transaction.setMemberEmail(response.getRespondentEmail());
+                transaction.setDescription("Participation fee for activity: " + activity.getTitle());
+                transaction.setPaid(false);
+                TransactionType transactionType = new TransactionType();
+                transactionType.setActivityId(activity.getActivityId());
+                TransactionWrapper transactionWrapper = new TransactionWrapper();
+                transactionWrapper.setTransaction(transaction);
+                transactionWrapper.setTransaction_type(transactionType);
+                producer.sendTransaction(transactionWrapper);
+            }
+            activity.setProcessed(true);
+            activityRepository.save(activity);
         }
 
     }

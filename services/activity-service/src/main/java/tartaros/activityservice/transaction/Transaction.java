@@ -10,8 +10,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 public class Transaction implements Serializable {
-    private Long transactionId;
-    private Long memberId;
+    private String memberEmail;
     private Double amount;
     private String description;
     private boolean paid = false;
