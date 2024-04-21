@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: google
+  name: google
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: google
+  template:
+    metadata:
+      labels:
+        app: google
+    spec:
+      containers:
+        - env:
+            - name: DISCOVERY_HOST
+              value: discovery
+            - name: MYSQL_FINANCIAL_HOST
+              value: mysql_financial
+            - name: MYSQL_HOST
+              value: mysql
+            - name: PORT_API
+              value: "8080"
+            - name: PORT_DB
+              value: "3306"
+            - name: PORT_DISCOVERY
+              value: "8761"
+            - name: PORT_RABBITMQ
+              value: "5672"
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+          image: dockjoep/tartaros-services:google
+          name: google
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: google-service
+  labels:
+    app: google-service
+spec:
+  selector:
+    app: google
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080

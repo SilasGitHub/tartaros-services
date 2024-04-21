@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gateway
+  name: gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - env:
+            - name: DISCOVERY_HOST
+              value: discovery
+            - name: MYSQL_FINANCIAL_HOST
+              value: mysql_financial
+            - name: MYSQL_HOST
+              value: mysql
+            - name: PORT_API
+              value: "8080"
+            - name: PORT_DB
+              value: "3306"
+            - name: PORT_DISCOVERY
+              value: "8761"
+            - name: PORT_RABBITMQ
+              value: "5672"
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+          image: dockjoep/tartaros-services:gateway
+          name: gateway
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gateway
+  name: gateway
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: gateway
+  type: LoadBalancer
