@@ -80,8 +80,6 @@ services:
       RABBITMQ_PASS: ${RABBIT_MQ_PASS:-guest}
       RABBITMQ_USER: ${RABBIT_MQ_USER:-guest}
   financial:
-    ports:
-      - "8086:8086"
     depends_on:
       mysql_financial:
         condition: service_healthy
