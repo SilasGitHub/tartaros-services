@@ -3,16 +3,17 @@ package tartaros.financialservice.db.service.membership;
 import tartaros.financialservice.db.entity.MembershipType;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface MembershipTypeService {
 
     MembershipType saveMembershipType(MembershipType membershipType);
 
-    MembershipType fetchMembershipTypeById(Long membershipTypeId);
+    MembershipType fetchMembershipTypeById(UUID membershipTypeId);
 
     List<MembershipType> fetchMembershipTypeList();
 
-    void deleteMembershipTypeById(Long membershipTypeId);
+    void deleteMembershipTypeById(UUID membershipTypeId);
 
-    MembershipType updateMembershipType(MembershipType membershipType, Long membershipTypeId);
+    MembershipType updateMembershipType(MembershipType membershipType, UUID membershipTypeId);
 }

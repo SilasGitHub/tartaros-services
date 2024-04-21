@@ -12,6 +12,8 @@ import tartaros.financialservice.db.service.transaction.TransactionService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+
 @Service
 public class MembershipServceImpl implements MembershipService {
 
@@ -38,7 +40,7 @@ public class MembershipServceImpl implements MembershipService {
 
 
     @Override
-    public Membership fetchMembershipById(Long membershipId) {
+    public Membership fetchMembershipById(UUID membershipId) {
         return membershipRepository.findById(membershipId).get();
     }
 
@@ -48,7 +50,7 @@ public class MembershipServceImpl implements MembershipService {
     }
 
     @Override
-    public void deleteMembershipById(Long membershipId) {
+    public void deleteMembershipById(UUID membershipId) {
         membershipRepository.deleteById(membershipId);
     }
 
@@ -61,7 +63,7 @@ public class MembershipServceImpl implements MembershipService {
         t.setTransactionTime(LocalDateTime.now());
         transactionService.saveTransaction(t);
         MembershipTransaction mt = new MembershipTransaction();
-        mt.setMembershipType(membershipType.getMembershipType());
+        mt.setMembershipTypeId(membershipType.getMembershipTypeId());
         mt.setTransaction(t);
         membershipTransactionService.saveMembershipTransaction(mt);
     }

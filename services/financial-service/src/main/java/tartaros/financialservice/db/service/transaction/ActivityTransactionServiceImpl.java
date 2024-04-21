@@ -6,6 +6,7 @@ import tartaros.financialservice.db.entity.ActivityTransaction;
 import tartaros.financialservice.db.repository.ActivityTransactionRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 // Annotation
 @Service
@@ -30,7 +31,7 @@ public class ActivityTransactionServiceImpl
     }
 
     @Override
-    public void deleteActivityTransactionById(Long activityTransactionId) {
+    public void deleteActivityTransactionById(UUID activityTransactionId) {
         activityTransactionRepository.deleteById(activityTransactionId);
     }
 

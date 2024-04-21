@@ -21,7 +21,7 @@ public class ActivityTransaction {
 
     @Id
     @GeneratedValue
-    private Long activityTransactionId;
+    private UUID activityTransactionId;
 
     private UUID activityId;
 }

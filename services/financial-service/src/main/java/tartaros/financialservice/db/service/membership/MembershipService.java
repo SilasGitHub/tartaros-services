@@ -4,6 +4,7 @@ import tartaros.financialservice.db.entity.Membership;
 import tartaros.financialservice.db.entity.MembershipType;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface MembershipService {
 
@@ -11,11 +12,11 @@ public interface MembershipService {
 
     Membership saveMembership(Membership membership);
 
-    Membership fetchMembershipById(Long membershipId);
+    Membership fetchMembershipById(UUID membershipId);
 
     List<Membership> fetchMembershipList();
 
-    void deleteMembershipById(Long membershipId);
+    void deleteMembershipById(UUID membershipId);
 
     void doTransaction(Membership membership, MembershipType membershipType);
 }

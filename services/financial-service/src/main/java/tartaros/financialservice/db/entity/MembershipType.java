@@ -16,7 +16,7 @@ import java.util.*;
 public class MembershipType {
     @Id
     @GeneratedValue
-    private Long membershipType;
+    private UUID membershipTypeId;
     private String name;
     private Double price;
     private Integer duration;

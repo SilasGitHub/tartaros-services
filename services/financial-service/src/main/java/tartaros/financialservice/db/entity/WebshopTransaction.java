@@ -20,7 +20,7 @@ public class WebshopTransaction {
     private Transaction transaction;
     @Id
     @GeneratedValue
-    private Long webshopTransactionId;
+    private UUID webshopTransactionId;
     private UUID itemId;
     private int count;
 }

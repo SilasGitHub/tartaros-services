@@ -6,6 +6,7 @@ import tartaros.financialservice.db.entity.WebshopTransaction;
 import tartaros.financialservice.db.repository.WebshopTransactionRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 // Annotation
 @Service
@@ -30,7 +31,7 @@ public class WebshopTransactionServiceImpl
     }
 
     @Override
-    public void deleteWebshopTransactionById(Long webshopTransactionId) {
+    public void deleteWebshopTransactionById(UUID webshopTransactionId) {
         webshopTransactionRepository.deleteById(webshopTransactionId);
     }
 }

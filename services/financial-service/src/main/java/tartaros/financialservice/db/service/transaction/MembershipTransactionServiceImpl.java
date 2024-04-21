@@ -6,6 +6,8 @@ import tartaros.financialservice.db.entity.MembershipTransaction;
 import tartaros.financialservice.db.repository.MembershipTransactionRepository;
 
 import java.util.List;
+import java.util.UUID;
+
 @Service
 public class MembershipTransactionServiceImpl implements MembershipTransactionService{
 
@@ -24,7 +26,7 @@ public class MembershipTransactionServiceImpl implements MembershipTransactionSe
     }
 
     @Override
-    public void deleteMembershipTransactionById(Long membershipTransactionId) {
+    public void deleteMembershipTransactionById(UUID membershipTransactionId) {
         membershipTransactionRepository.deleteById(membershipTransactionId);
     }
 }

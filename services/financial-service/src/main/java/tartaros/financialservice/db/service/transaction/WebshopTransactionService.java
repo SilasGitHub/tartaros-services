@@ -16,5 +16,5 @@ public interface WebshopTransactionService {
     List<WebshopTransaction> fetchWebshopTransactionList();
 
     // Delete operation
-    void deleteWebshopTransactionById(Long webshopTransactionId);
+    void deleteWebshopTransactionById(UUID webshopTransactionId);
 }

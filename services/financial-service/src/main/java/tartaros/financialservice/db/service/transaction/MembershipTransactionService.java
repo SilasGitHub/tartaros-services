@@ -3,6 +3,7 @@ package tartaros.financialservice.db.service.transaction;
 import tartaros.financialservice.db.entity.MembershipTransaction;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface MembershipTransactionService {
 
@@ -11,5 +12,5 @@ public interface MembershipTransactionService {
     List<MembershipTransaction> fetchMembershipTransactionList();
 
     // Delete operation
-    void deleteMembershipTransactionById(Long membershipTransactionId);
+    void deleteMembershipTransactionById(UUID membershipTransactionId);
 }

@@ -16,5 +16,5 @@ public interface ActivityTransactionService {
     List<ActivityTransaction> fetchActivityTransactionList();
 
     // Delete operation
-    void deleteActivityTransactionById(Long activityTransactionId);
+    void deleteActivityTransactionById(UUID activityTransactionId);
 }

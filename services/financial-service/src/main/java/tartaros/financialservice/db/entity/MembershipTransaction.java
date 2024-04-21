@@ -19,7 +19,7 @@ public class MembershipTransaction {
 
     @Id
     @GeneratedValue
-    private Long membershipTransactionId;
+    private UUID membershipTransactionId;
 
-    private Long membershipType;
+    private UUID membershipTypeId;
 }

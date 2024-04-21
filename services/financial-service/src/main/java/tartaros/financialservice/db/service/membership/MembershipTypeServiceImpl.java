@@ -6,6 +6,8 @@ import tartaros.financialservice.db.entity.MembershipType;
 import tartaros.financialservice.db.repository.MembershipTypeRepository;
 
 import java.util.List;
+import java.util.UUID;
+
 @Service
 public class MembershipTypeServiceImpl implements MembershipTypeService {
 
@@ -17,7 +19,7 @@ public class MembershipTypeServiceImpl implements MembershipTypeService {
     }
 
     @Override
-    public MembershipType fetchMembershipTypeById(Long membershipTypeId) {
+    public MembershipType fetchMembershipTypeById(UUID membershipTypeId) {
         return membershipTypeRepository.findById(membershipTypeId).get();
     }
 
@@ -27,12 +29,12 @@ public class MembershipTypeServiceImpl implements MembershipTypeService {
     }
 
     @Override
-    public void deleteMembershipTypeById(Long membershipTypeId) {
+    public void deleteMembershipTypeById(UUID membershipTypeId) {
         membershipTypeRepository.deleteById(membershipTypeId);
     }
 
     @Override
-    public MembershipType updateMembershipType(MembershipType membershipType, Long membershipTypeId) {
+    public MembershipType updateMembershipType(MembershipType membershipType, UUID membershipTypeId) {
         MembershipType depDB = membershipTypeRepository.findById(membershipTypeId).get();
         if (membershipType.getDuration() != null) {
             depDB.setDuration(membershipType.getDuration());

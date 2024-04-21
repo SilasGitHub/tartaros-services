@@ -106,27 +106,27 @@ public class IndexController {
     }
 
     @DeleteMapping("/financial/membership/{membershipId}")
-    public void deleteMembershipById(@PathVariable Long membershipId) {
+    public void deleteMembershipById(@PathVariable UUID membershipId) {
         membershipService.deleteMembershipById(membershipId);
     }
 
-    @GetMapping("/financial/membership/type")
+    @GetMapping("/financial/membershipType")
     public List<MembershipType> getAllMembershipTypes() {
         return membershipTypeService.fetchMembershipTypeList();
     }
 
-    @PostMapping("/financial/membership/type")
+    @PostMapping("/financial/membershipType")
     public MembershipType createMembershipType(@RequestBody MembershipType membershipType) {
         return membershipTypeService.saveMembershipType(membershipType);
     }
 
-    @DeleteMapping("/financial/membership/type/{membershipTypeId}")
-    public void deleteMembershipTypeById(@PathVariable Long membershipTypeId) {
+    @DeleteMapping("/financial/membershipType/{membershipTypeId}")
+    public void deleteMembershipTypeById(@PathVariable UUID membershipTypeId) {
         membershipTypeService.deleteMembershipTypeById(membershipTypeId);
     }
 
-    @PutMapping("/financial/membership/type/{membershipTypeId}")
-    public MembershipType updateMembershipTypeById(@PathVariable Long membershipTypeId, @RequestBody MembershipType membershipType) {
+    @PutMapping("/financial/membershipType/{membershipTypeId}")
+    public MembershipType updateMembershipTypeById(@PathVariable UUID membershipTypeId, @RequestBody MembershipType membershipType) {
         return membershipTypeService.updateMembershipType(membershipType, membershipTypeId);
     }
 

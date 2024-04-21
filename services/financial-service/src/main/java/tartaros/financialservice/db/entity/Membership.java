@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Membership {
     @Id
     @GeneratedValue
-    private Long membershipId;
+    private UUID membershipId;
     private String memberEmail;
     private Long membershipType;
     private LocalDateTime nextPaymentDate;

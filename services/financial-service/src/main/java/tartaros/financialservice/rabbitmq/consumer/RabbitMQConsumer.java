@@ -54,16 +54,6 @@ public class RabbitMQConsumer {
                 e.printStackTrace();
             }
         }
-
-        System.out.println("Activities");
-        for (Transaction trans: transactionService.fetchTransactionList()) {
-            System.out.println(trans.getTransactionId());
-        }
-
-        System.out.println("Activity transactions");
-        for (ActivityTransaction actTrans: activityTransactionService.fetchActivityTransactionList()) {
-            System.out.println(actTrans.getTransaction().getTransactionId());
-        }
     }
 
 }
