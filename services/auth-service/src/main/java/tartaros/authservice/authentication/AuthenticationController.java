@@ -59,6 +59,10 @@ public class AuthenticationController {
     public void setJwt(@AuthenticationPrincipal OAuth2User principal, HttpServletResponse response) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         // Google account identifier
         String sub = principal.getAttribute("sub");
+        System.out.println(sub);
+        for (WorkspaceUser w : userRepository.findAll()) {
+            System.out.println(w.getSub());
+        }
 
         // We expect each user to be in our repository already as we sync with the Google Workspace every 5 minutes
         Optional<WorkspaceUser> optionalUser = Flux.fromIterable(userRepository.findAll()).filter(workspaceUser -> workspaceUser.getSub().equals(sub)).toStream().findFirst();
@@ -96,7 +100,7 @@ public class AuthenticationController {
         List<WorkspaceUser> result = new ArrayList<>();
 
         result.add(new WorkspaceUser(UUID.randomUUID(), "109138331861590363980", "Silas de Graaf", true));
-        result.add(new WorkspaceUser(UUID.randomUUID(), "sub2", "user2", false));
+        result.add(new WorkspaceUser(UUID.randomUUID(), "115502612022482475640", "Joep Vorage", false));
 
         return result;
     }
