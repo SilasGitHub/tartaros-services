@@ -12,6 +12,7 @@ public class ActivityConfiguration {
 
     @Inject
     private ActivityController activityController;
+
     @Scheduled(fixedDelay = 15000)
     public void activityDeadlineTask() {
         activityController.activityDeadline();

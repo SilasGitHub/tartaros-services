@@ -6,9 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
+import tartaros.activityservice.authentication.Authentication;
+import tartaros.activityservice.authentication.JwtClaims;
 import tartaros.activityservice.rabbitmq.publisher.RabbitMQProducer;
 import tartaros.activityservice.transaction.Transaction;
 import tartaros.activityservice.transaction.TransactionType;
@@ -30,6 +33,7 @@ class ActivityController {
     private GoogleClient googleClient;
 
     @Autowired private RabbitMQProducer producer;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivityController.class);
 
     public ActivityController(ActivityRepository activityRepository) {
@@ -38,18 +42,28 @@ class ActivityController {
 
     @PostMapping("/activity")
     @ResponseStatus(HttpStatus.CREATED)
-    public Activity addActivity(@RequestBody Activity activity) {
+    public Activity addActivity(@CookieValue(name="jwt", defaultValue = "") String token, @RequestBody Activity activity) {
+        if (!Authentication.verifyAuthentication(token, true)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
+        activity.setCreatedBy(Authentication.getClaims(token).getEmail());
         activity.setExternalId(googleClient.createForm(activity.getCreatedBy()));
         return activityRepository.save(activity);
     }
 
     @GetMapping("/activity")
-    public Iterable<Activity> getActivities() {
+    public Iterable<Activity> getActivities(@CookieValue(name="jwt", defaultValue = "") String token) {
+        if (!Authentication.verifyAuthentication(token, false)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
         return activityRepository.findAll();
     }
 
     @GetMapping("/activity/{id}")
-    public Activity getActivity(@PathVariable("id") UUID id) {
+    public Activity getActivity(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id) {
+        if (!Authentication.verifyAuthentication(token, false)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
         Optional<Activity> activity = activityRepository.findById(id);
         if (activity.isEmpty()) {
             throw new ResponseStatusException(
@@ -60,7 +74,10 @@ class ActivityController {
     }
 
     @GetMapping("/activity/{activityId}/response/{responseId}")
-    public FormResponse getActivityResponse(@PathVariable("activityId") UUID activityId, @PathVariable("responseId") String responseId) {
+    public FormResponse getActivityResponse(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("activityId") UUID activityId, @PathVariable("responseId") String responseId) {
+        if (!Authentication.verifyAuthentication(token, false)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
         Optional<Activity> activity = activityRepository.findById(activityId);
         if (activity.isEmpty()) {
             throw new ResponseStatusException(
@@ -74,11 +91,23 @@ class ActivityController {
                     HttpStatus.NOT_FOUND, "Response not found"
             );
         }
+
+        // non-admins can only see their own responses
+        JwtClaims claims = Authentication.getClaims(token);
+        if (!claims.isAdmin() && !claims.getEmail().equals(response.getRespondentEmail())) {
+            throw new ResponseStatusException(
+                    HttpStatusCode.valueOf(403), "Invalid credentials"
+            );
+        }
+
         return response;
     }
 
     @GetMapping("/activity/{id}/response")
-    public Iterable<FormResponse> getActivityResponses(@PathVariable("id") UUID id) {
+    public Iterable<FormResponse> getActivityResponses(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id) {
+        if (!Authentication.verifyAuthentication(token, false)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
         Optional<Activity> activity = activityRepository.findById(id);
         if (activity.isEmpty()) {
             throw new ResponseStatusException(
@@ -95,20 +124,29 @@ class ActivityController {
         responses = responses.stream().filter(response -> !activity.get().getDeletedResponses().contains(response.getResponseId())).toList();
 
         List<String> visibleQuestions = activity.get().getVisibileQuestions();
-        return responses.stream().map(response -> {
-            // Filter out the answers that should not be visible for public view
-            response.setAnswers(response.getAnswers().entrySet().stream().filter(
-                    answer -> visibleQuestions.contains(answer.getKey())).collect(
-                            Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-            );
-            // Do not return the email of the respondent for public view
-            response.setRespondentEmail(null);
-            return response;
-        }).toList();
+
+        JwtClaims claims = Authentication.getClaims(token);
+        if (!claims.isAdmin()) {
+            responses = responses.stream().map(response -> {
+                // Filter out the answers that should not be visible for public view
+                response.setAnswers(response.getAnswers().entrySet().stream().filter(
+                        answer -> visibleQuestions.contains(answer.getKey())).collect(
+                        Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+                );
+                // Do not return the email of the respondent for public view
+                response.setRespondentEmail(null);
+                return response;
+            }).toList();
+        }
+
+        return responses;
     }
 
     @GetMapping("/activity/{id}/questions")
-    public Iterable<FormQuestion> getQuestions(@PathVariable("id") UUID id) {
+    public Iterable<FormQuestion> getQuestions(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id) {
+        if (!Authentication.verifyAuthentication(token, false)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
         Optional<Activity> activity = activityRepository.findById(id);
         if (activity.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Activity not found");
@@ -117,7 +155,10 @@ class ActivityController {
     }
 
     @PutMapping("/activity/{id}")
-    public Activity updateActivity(@PathVariable("id") UUID id, @RequestBody Activity activity) {
+    public Activity updateActivity(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id, @RequestBody Activity activity) {
+        if (!Authentication.verifyAuthentication(token, true)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
         Optional<Activity> activityOptional = activityRepository.findById(id);
         if (activityOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Activity not found");
@@ -152,7 +193,10 @@ class ActivityController {
     }
 
     @DeleteMapping("/activity/{id}")
-    public void deleteActivity(@PathVariable("id") UUID id) {
+    public void deleteActivity(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("id") UUID id) {
+        if (!Authentication.verifyAuthentication(token, true)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
         Optional<Activity> activity = activityRepository.findById(id);
         if (activity.isPresent()) {
             activityRepository.delete(activity.get());
@@ -162,7 +206,10 @@ class ActivityController {
     }
 
     @DeleteMapping("/activity/{activityId}/response/{responseId}")
-    public void cancelParticipation(@PathVariable("activityId") UUID activityId, @PathVariable("responseId") String responseId) {
+    public void cancelParticipation(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("activityId") UUID activityId, @PathVariable("responseId") String responseId) {
+        if (!Authentication.verifyAuthentication(token, false)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
         // Since it is currently impossible to delete a response from a form using the Google Forms API,
         // we will instead mark the response as deleted in the database
         Optional<Activity> optionalActivity = activityRepository.findById(activityId);
@@ -174,6 +221,14 @@ class ActivityController {
         if (response == null) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Response not found"
+            );
+        }
+
+        // non-admins can only delete their own responses
+        JwtClaims claims = Authentication.getClaims(token);
+        if (!claims.isAdmin() && !claims.getEmail().equals(response.getRespondentEmail())) {
+            throw new ResponseStatusException(
+                    HttpStatusCode.valueOf(403), "Invalid credentials"
             );
         }
 

@@ -2,38 +2,16 @@ version: "3.4"
 x-common-variables: &common-env-vars
   PORT_DB: ${PORT_DB:-3306}
   PORT_API: ${PORT_API:-8080}
+  PORT_AUTH: ${PORT_AUTH:-8081}
   PORT_RABBITMQ: ${PORT_RABBITMQ:-5672}
   PORT_DISCOVERY: ${PORT_DISCOVERY:-8761}
   DISCOVERY_HOST: discovery
+  GATEWAY_HOST: localhost
+  AUTH_HOST: localhost
   RABBITMQ_HOST: rabbitmq
+  JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
 
 services:
-  mysql_activity:
-    image: mysql
-    environment:
-      MYSQL_DATABASE: ${ACTIVITY_MYSQL_DATABASE:-activity_db}
-      MYSQL_USER: ${ACTIVITY_MYSQL_USER:-activity_user}
-      MYSQL_PASSWORD: ${ACTIVITY_MYSQL_PASSWORD:-activity_password}
-      MYSQL_ROOT_PASSWORD: ${ACTIVITY_MYSQL_ROOT_PASSWORD:-root_password}
-    volumes:
-      - "./conf.d:/etc/mysql/conf.d:ro"
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      timeout: 5s
-      retries: 10
-  mysql_financial:
-    image: mysql
-    environment:
-      MYSQL_DATABASE: ${FINANCIAL_MYSQL_DATABASE:-financial_db}
-      MYSQL_USER: ${FINANCIAL_MYSQL_USER:-financial_user}
-      MYSQL_PASSWORD: ${FINANCIAL_MYSQL_PASSWORD:-financial_password}
-      MYSQL_ROOT_PASSWORD: ${FINANCIAL_MYSQL_ROOT_PASSWORD:-root_password}
-    volumes:
-      - "./conf.d:/etc/mysql/conf.d:ro"
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      timeout: 5s
-      retries: 10
   rabbitmq:
     image: rabbitmq:management
     ports:
@@ -62,6 +40,19 @@ services:
       - "${PORT_API:-8080}:${PORT_API:-8080}"
     environment:
       <<: *common-env-vars
+  mysql_activity:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: ${ACTIVITY_MYSQL_DATABASE:-activity_db}
+      MYSQL_USER: ${ACTIVITY_MYSQL_USER:-activity_user}
+      MYSQL_PASSWORD: ${ACTIVITY_MYSQL_PASSWORD:-activity_password}
+      MYSQL_ROOT_PASSWORD: ${ACTIVITY_MYSQL_ROOT_PASSWORD:-root_password}
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 10
   activity:
     depends_on:
       mysql_activity:
@@ -79,6 +70,19 @@ services:
       MYSQL_PASSWORD: ${ACTIVITY_MYSQL_PASSWORD:-activity_password}
       RABBITMQ_PASS: ${RABBIT_MQ_PASS:-guest}
       RABBITMQ_USER: ${RABBIT_MQ_USER:-guest}
+  mysql_financial:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: ${FINANCIAL_MYSQL_DATABASE:-financial_db}
+      MYSQL_USER: ${FINANCIAL_MYSQL_USER:-financial_user}
+      MYSQL_PASSWORD: ${FINANCIAL_MYSQL_PASSWORD:-financial_password}
+      MYSQL_ROOT_PASSWORD: ${FINANCIAL_MYSQL_ROOT_PASSWORD:-root_password}
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 10
   financial:
     depends_on:
       mysql_financial:
@@ -110,3 +114,34 @@ services:
     build: services/ui-service
     environment:
       <<: *common-env-vars
+  mysql_authentication:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: ${AUTHENTICATION_MYSQL_DATABASE:-authentication_db}
+      MYSQL_USER: ${AUTHENTICATION_MYSQL_USER:-authentication_user}
+      MYSQL_PASSWORD: ${AUTHENTICATION_MYSQL_PASSWORD:-authentication_password}
+      MYSQL_ROOT_PASSWORD: ${AUTHENTICATION_MYSQL_ROOT_PASSWORD:-root_password}
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 10
+  auth:
+    depends_on:
+      discovery:
+        condition: service_healthy
+      mysql_authentication:
+        condition: service_healthy
+    build: services/auth-service
+    ports:
+      - "${PORT_AUTH:-8081}:${PORT_AUTH:-8081}"
+    environment:
+      <<: *common-env-vars
+      MYSQL_HOST: mysql_authentication
+      MYSQL_DATABASE: ${AUTHENTICATION_MYSQL_DATABASE:-authentication_db}
+      MYSQL_USER: ${AUTHENTICATION_MYSQL_USER:-authentication_user}
+      MYSQL_PASSWORD: ${AUTHENTICATION_MYSQL_PASSWORD:-authentication_password}
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
