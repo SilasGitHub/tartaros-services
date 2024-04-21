@@ -15,7 +15,7 @@ services:
   rabbitmq:
     image: rabbitmq:management
     ports:
-      - "${PORT_RABBITMQ_MANAGEMENT:-15672}:${PORT_RABBITMQ_MANAGEMENT:-15672}"
+      - "${PORT_RABBITMQ_DASHBOARD:-15672}:${PORT_RABBITMQ_DASHBOARD:-15672}"
     environment:
       RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ_PASS:-guest}
       RABBITMQ_DEFAULT_USER: ${RABBIT_MQ_USER:-guest}

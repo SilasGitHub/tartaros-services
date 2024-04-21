@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +19,11 @@ import java.util.UUID;
 public class Activity {
     @Id
     @GeneratedValue(generator = "UUID")
-    private UUID id;
+    private UUID activityId;
+
+    private String title;
+
+    private String description;
 
     @NotNull
     @Email
@@ -33,15 +37,17 @@ public class Activity {
     private Integer maxParticipants;
 
     @NotNull
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private Instant createdAt = Instant.now();
 
     @NotNull
-    private LocalDateTime signUpDeadline;
+    private Instant signUpDeadline;
 
     @NotNull
-    private LocalDateTime activityStartDate;
+    private Instant activityStartDate;
 
-    private LocalDateTime activityEndDate;
+    private Instant activityEndDate;
+
+    private boolean isProcessed = false;
 
     @NotNull
     private String externalId; // Google Forms API ID, can be found in the web address of the form (https://docs.google.com/forms/d/{id})

@@ -11,8 +11,7 @@ import java.util.UUID;
 @Setter
 @ToString
 public class Transaction implements Serializable {
-    private UUID transactionId;
-    private UUID memberId;
+    private String memberEmail;
     private Double amount;
     private String description;
     private boolean paid = false;
