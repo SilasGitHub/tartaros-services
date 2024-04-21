@@ -52,9 +52,9 @@ public class TransactionServiceImpl
             depDB.setTransactionTime(transaction.getTransactionTime());
         }
 
-        if (Objects.nonNull(transaction.getMemberId())) {
-            depDB.setMemberId(
-                    transaction.getMemberId());
+        if (Objects.nonNull(transaction.getMemberEmail())) {
+            depDB.setMemberEmail(
+                    transaction.getMemberEmail());
         }
 
         if (Objects.nonNull(

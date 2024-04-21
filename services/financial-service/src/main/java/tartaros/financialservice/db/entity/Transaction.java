@@ -20,7 +20,7 @@ public class Transaction implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "transaction_id")
     private UUID transactionId;
-    private UUID memberId;
+    private String memberEmail;
     private Double amount;
     private String description;
     private boolean paid = false;

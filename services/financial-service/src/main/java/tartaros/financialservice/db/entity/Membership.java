@@ -20,7 +20,7 @@ public class Membership {
     @Id
     @GeneratedValue
     private Long membershipId;
-    private UUID memberId;
+    private String memberEmail;
     private Long membershipType;
     private LocalDateTime nextPaymentDate;
 }

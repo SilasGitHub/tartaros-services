@@ -56,7 +56,7 @@ public class MembershipServceImpl implements MembershipService {
     public void doTransaction(Membership membership, MembershipType membershipType) {
         Transaction t = new Transaction();
         t.setAmount(membershipType.getPrice());
-        t.setMemberId(membership.getMemberId());
+        t.setMemberEmail(membership.getMemberEmail());
         t.setDescription(membershipType.getName());
         t.setTransactionTime(LocalDateTime.now());
         transactionService.saveTransaction(t);
