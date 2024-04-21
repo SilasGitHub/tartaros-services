@@ -1,9 +1,12 @@
-package tartaros.financialservice.db.service;
+package tartaros.financialservice.db.service.transaction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tartaros.financialservice.db.entity.ActivityTransaction;
 import tartaros.financialservice.db.repository.ActivityTransactionRepository;
+
+import java.util.List;
+import java.util.UUID;
 
 // Annotation
 @Service
@@ -14,14 +17,23 @@ public class ActivityTransactionServiceImpl
 
     @Autowired
     private ActivityTransactionRepository activityTransactionRepository;
+
     @Override
     public ActivityTransaction saveActivityTransaction(ActivityTransaction activityTransaction) {
         return activityTransactionRepository.save(activityTransaction);
     }
 
-    @Override
-    public void deleteTransactionById(Long transactionId) {
-        activityTransactionRepository.deleteById(transactionId);
-
+    // Read operation
+    @Override public List<ActivityTransaction> fetchActivityTransactionList()
+    {
+        return (List<ActivityTransaction>)
+                activityTransactionRepository.findAll();
     }
+
+    @Override
+    public void deleteActivityTransactionById(UUID activityTransactionId) {
+        activityTransactionRepository.deleteById(activityTransactionId);
+    }
+
+
 }

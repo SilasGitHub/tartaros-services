@@ -5,23 +5,26 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Data
-@Table(name="Transaction")
+@Table(name="transaction")
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 public class Transaction implements Serializable {
     @Id
-    @GeneratedValue
-    private Long transactionId;
-    private Long memberId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "transaction_id")
+    private UUID transactionId;
+    private String memberEmail;
     private Double amount;
     private String description;
     private boolean paid = false;
+    private LocalDateTime transactionTime;
 
 }
 

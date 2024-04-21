@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class TransactionWrapper implements Serializable {
     private Transaction transaction;
     private TransactionType transaction_type;

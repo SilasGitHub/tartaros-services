@@ -96,7 +96,7 @@ public class AuthenticationController {
         List<WorkspaceUser> result = new ArrayList<>();
 
         result.add(new WorkspaceUser(UUID.randomUUID(), "109138331861590363980", "Silas de Graaf", true));
-        result.add(new WorkspaceUser(UUID.randomUUID(), "sub2", "user2", false));
+        result.add(new WorkspaceUser(UUID.randomUUID(), "115502612022482475640", "Joep Vorage", false));
 
         return result;
     }

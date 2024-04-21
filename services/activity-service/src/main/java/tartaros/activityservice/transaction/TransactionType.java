@@ -3,6 +3,7 @@ package tartaros.activityservice.transaction;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -11,5 +12,5 @@ import java.io.Serializable;
 @ToString
 public class TransactionType implements Serializable {
     String type = "activity";
-    Long activityId;
+    UUID activityId;
 }
