@@ -23,6 +23,9 @@ public class ApiGatewayApplication {
     @Value("${auth.port}")
     private String PORT_AUTH;
 
+    @Value("${auth.host}")
+    private String HOST_AUTH;
+
     @Bean
     public RouterFunction<ServerResponse> routeConfig() {
         RouterFunctions.Builder routeBuilder = route("routes");
@@ -30,7 +33,7 @@ public class ApiGatewayApplication {
         return  routeBuilder
                 .route(path("/auth/**"), http())
                 .before(stripPrefix(1))
-                .before(setRequestHostHeader("localhost:" + PORT_AUTH))
+                .before(setRequestHostHeader(HOST_AUTH + ":" + PORT_AUTH))
                 .filter(lb("auth-service"))
                 .build()
                 .andRoute(path("/activity/**"), http())

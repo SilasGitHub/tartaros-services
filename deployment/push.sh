@@ -1,14 +1,14 @@
-docker tag tartaros-services-financial:latest silasdockerhub/tartaros-services:financial
-docker tag tartaros-services-activity:latest silasdockerhub/tartaros-services:activity
-docker tag tartaros-services-google:latest silasdockerhub/tartaros-services:google
-docker tag tartaros-services-discovery:latest silasdockerhub/tartaros-services:discovery
-docker tag tartaros-services-ui:latest silasdockerhub/tartaros-services:ui
-docker tag tartaros-services-gateway:latest silasdockerhub/tartaros-services:gateway
-docker tag tartaros-services-auth:latest silasdockerhub/tartaros-services:auth
-docker push silasdockerhub/tartaros-services:financial
-docker push silasdockerhub/tartaros-services:activity
-docker push silasdockerhub/tartaros-services:google
-docker push silasdockerhub/tartaros-services:discovery
-docker push silasdockerhub/tartaros-services:ui
-docker push silasdockerhub/tartaros-services:gateway
-docker push silasdockerhub/tartaros-services:auth
+docker tag tartaros-services-financial:latest dockjoep/tartaros-services:financial
+docker tag tartaros-services-activity:latest dockjoep/tartaros-services:activity
+docker tag tartaros-services-google:latest dockjoep/tartaros-services:google
+docker tag tartaros-services-discovery:latest dockjoep/tartaros-services:discovery
+docker tag tartaros-services-ui:latest dockjoep/tartaros-services:ui
+docker tag tartaros-services-gateway:latest dockjoep/tartaros-services:gateway
+docker tag tartaros-services-auth:latest dockjoep/tartaros-services:auth
+docker push dockjoep/tartaros-services:financial
+docker push dockjoep/tartaros-services:activity
+docker push dockjoep/tartaros-services:google
+docker push dockjoep/tartaros-services:discovery
+docker push dockjoep/tartaros-services:ui
+docker push dockjoep/tartaros-services:gateway
+docker push dockjoep/tartaros-services:auth

@@ -6,7 +6,8 @@ x-common-variables: &common-env-vars
   PORT_RABBITMQ: ${PORT_RABBITMQ:-5672}
   PORT_DISCOVERY: ${PORT_DISCOVERY:-8761}
   DISCOVERY_HOST: discovery
-  API_HOST: localhost
+  GATEWAY_HOST: localhost
+  AUTH_HOST: localhost
   RABBITMQ_HOST: rabbitmq
   JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
 
