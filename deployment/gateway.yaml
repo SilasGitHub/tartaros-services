@@ -55,4 +55,3 @@ spec:
   selector:
     app: gateway
   type: LoadBalancer
-
