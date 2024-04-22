@@ -14,6 +14,5 @@ public class Transaction implements Serializable {
     private String memberEmail;
     private Double amount;
     private String description;
-    private boolean paid = false;
 }
 
