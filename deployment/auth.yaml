@@ -80,11 +80,11 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: GOOGLE_CLIENT_SECRET
-          image: dockjoep/tartaros-services:auth
+          image: localhost/auth-service:latest
           name: services-auth
           ports:
             - containerPort: 8081
-          imagePullPolicy: Always
+          imagePullPolicy: Never
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

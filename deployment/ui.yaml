@@ -31,9 +31,9 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: PORT_DISCOVERY
-          image: dockjoep/tartaros-services:ui
+          image: localhost/ui-service:latest
           name: ui
-          imagePullPolicy: Always
+          imagePullPolicy: Never
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

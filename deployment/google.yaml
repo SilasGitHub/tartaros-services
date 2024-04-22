@@ -31,9 +31,9 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: PORT_DISCOVERY
-          image: dockjoep/tartaros-services:google
+          image: localhost/google-service:latest
           name: google
-          imagePullPolicy: Always
+          imagePullPolicy: Never
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

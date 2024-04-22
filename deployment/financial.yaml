@@ -79,9 +79,9 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: JWT_PUBLIC_KEY
-          image: dockjoep/tartaros-services:financial
+          image: localhost/financial-service:latest
           name: financial
-          imagePullPolicy: Always
+          imagePullPolicy: Never
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always
