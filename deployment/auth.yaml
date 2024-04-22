@@ -1,0 +1,160 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - env:
+            - name: DISCOVERY_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: DISCOVERY_HOST
+            - name: PORT_DISCOVERY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_DISCOVERY
+            - name: GATEWAY_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: GATEWAY_HOST
+            - name: PORT_API
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_API
+            - name: PORT_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_AUTH
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_PASSWORD
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_HOST
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_USER
+            - name: PORT_DB
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_DB
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: JWT_PRIVATE_KEY
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: JWT_PUBLIC_KEY
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: GOOGLE_CLIENT_SECRET
+          image: dockjoep/tartaros-services:auth
+          name: services-auth
+          ports:
+            - containerPort: 8081
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: auth
+  name: auth
+spec:
+  selector:
+    app: auth
+  type: LoadBalancer
+  ports:
+    - name: "8081"
+      port: 8081
+      targetPort: 8081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-auth
+  labels:
+    app: mysql-auth
+spec:
+  selector:
+    matchLabels:
+      app: mysql-auth
+  template:
+    metadata:
+      labels:
+        app: mysql-auth
+    spec:
+      containers:
+        - name: mysql-auth
+          image: mysql
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_DATABASE
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_ROOT_PASSWORD
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_USER
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-auth
+  labels:
+    app: mysql-auth
+spec:
+  selector:
+    app: mysql-auth
+  ports:
+    - protocol: TCP
+      port: 3306

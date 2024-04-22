@@ -41,7 +41,7 @@ public class MembershipScheduler {
                 if (payDate.isBefore(LocalDateTime.now())) {
                     membership.setNextPaymentDate(payDate.plusMonths(membershipType.getDuration()));
                     membershipService.saveMembership(membership);
-                    membershipService.doTransaction(membership, membershipType);
+                    membershipService.createTransactionFromMembership(membership, membershipType);
                 }
             }
         }

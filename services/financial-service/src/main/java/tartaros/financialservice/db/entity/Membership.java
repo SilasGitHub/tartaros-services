@@ -21,6 +21,6 @@ public class Membership {
     @GeneratedValue
     private UUID membershipId;
     private String memberEmail;
-    private Long membershipType;
+    private UUID membershipTypeId;
     private LocalDateTime nextPaymentDate;
 }

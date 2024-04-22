@@ -74,6 +74,11 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: RABBITMQ_USER
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: JWT_PUBLIC_KEY
           image: dockjoep/tartaros-services:activity
           name: activity
           imagePullPolicy: Always

@@ -33,3 +33,6 @@ build/
 application-local.properties
 cred.json
 *.env
+*secrets.txt
+*secrets.yaml
+*generate_secret_yaml.sh

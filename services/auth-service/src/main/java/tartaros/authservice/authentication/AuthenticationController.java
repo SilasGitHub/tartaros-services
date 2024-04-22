@@ -41,7 +41,7 @@ public class AuthenticationController {
     @Value("${gateway.host}")
     private String gatewayHost;
 
-    @Value("${gateway.port}")
+    @Value("${port.gateway}")
     private String gatewayPort;
 
     public AuthenticationController(WorkspaceUserRepository userRepository) {
