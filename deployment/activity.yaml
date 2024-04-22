@@ -15,29 +15,70 @@ spec:
       containers:
         - env:
             - name: DISCOVERY_HOST
-              value: discovery
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: DISCOVERY_HOST
             - name: MYSQL_DATABASE
-              value: activity_db
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: ACTIVITY_MYSQL_DATABASE
             - name: MYSQL_HOST
-              value: mysql-activity
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: ACTIVITY_MYSQL_HOST
             - name: MYSQL_PASSWORD
-              value: activity_password
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: ACTIVITY_MYSQL_PASSWORD
             - name: MYSQL_USER
-              value: activity_user
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: ACTIVITY_MYSQL_USER
             - name: PORT_API
-              value: "8080"
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_API
             - name: PORT_DB
-              value: "3306"
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_DB
             - name: PORT_DISCOVERY
-              value: "8761"
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_DISCOVERY
             - name: PORT_RABBITMQ
-              value: "5672"
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_RABBITMQ
             - name: RABBITMQ_HOST
-              value: rabbitmq
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: RABBITMQ_HOST
             - name: RABBITMQ_PASS
-              value: guest
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: RABBITMQ_PASS
             - name: RABBITMQ_USER
-              value: guest
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: RABBITMQ_USER
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: JWT_PUBLIC_KEY
           image: dockjoep/tartaros-services:activity
           name: activity
           imagePullPolicy: Always
@@ -81,13 +122,25 @@ spec:
             - containerPort: 3306
           env:
             - name: MYSQL_DATABASE
-              value: activity_db
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: ACTIVITY_MYSQL_DATABASE
             - name: MYSQL_PASSWORD
-              value: activity_password
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: ACTIVITY_MYSQL_PASSWORD
             - name: MYSQL_ROOT_PASSWORD
-              value: root_password
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: ACTIVITY_MYSQL_ROOT_PASSWORD
             - name: MYSQL_USER
-              value: activity_user
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: ACTIVITY_MYSQL_USER
 ---
 apiVersion: v1
 kind: Service

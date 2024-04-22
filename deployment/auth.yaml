@@ -1,16 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: financial
+  name: auth
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: financial
+      app: auth
+  strategy: {}
   template:
     metadata:
       labels:
-        app: financial
+        app: auth
     spec:
       containers:
         - env:
@@ -19,68 +20,70 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: DISCOVERY_HOST
-            - name: MYSQL_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: secrets
-                  key: FINANCIAL_MYSQL_DATABASE
-            - name: MYSQL_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: secrets
-                  key: FINANCIAL_MYSQL_HOST
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: secrets
-                  key: FINANCIAL_MYSQL_PASSWORD
-            - name: MYSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: secrets
-                  key: FINANCIAL_MYSQL_USER
-            - name: PORT_API
-              valueFrom:
-                secretKeyRef:
-                  name: secrets
-                  key: PORT_API
-            - name: PORT_DB
-              valueFrom:
-                secretKeyRef:
-                  name: secrets
-                  key: PORT_DB
             - name: PORT_DISCOVERY
               valueFrom:
                 secretKeyRef:
                   name: secrets
                   key: PORT_DISCOVERY
-            - name: PORT_RABBITMQ
+            - name: GATEWAY_HOST
               valueFrom:
                 secretKeyRef:
                   name: secrets
-                  key: PORT_RABBITMQ
-            - name: RABBITMQ_HOST
+                  key: GATEWAY_HOST
+            - name: PORT_API
               valueFrom:
                 secretKeyRef:
                   name: secrets
-                  key: RABBITMQ_HOST
-            - name: RABBITMQ_PASS
+                  key: PORT_API
+            - name: PORT_AUTH
               valueFrom:
                 secretKeyRef:
                   name: secrets
-                  key: RABBITMQ_PASS
-            - name: RABBITMQ_USER
+                  key: PORT_AUTH
+            - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: secrets
-                  key: RABBITMQ_USER
+                  key: AUTH_MYSQL_PASSWORD
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_HOST
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_MYSQL_USER
+            - name: PORT_DB
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_DB
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: JWT_PRIVATE_KEY
             - name: JWT_PUBLIC_KEY
               valueFrom:
                 secretKeyRef:
                   name: secrets
                   key: JWT_PUBLIC_KEY
-          image: dockjoep/tartaros-services:financial
-          name: financial
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: GOOGLE_CLIENT_SECRET
+          image: dockjoep/tartaros-services:auth
+          name: services-auth
+          ports:
+            - containerPort: 8081
           imagePullPolicy: Always
       imagePullSecrets:
         - name: regcred
@@ -89,34 +92,35 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: financial-service
   labels:
-    app: financial-service
+    app: auth
+  name: auth
 spec:
   selector:
-    app: financial
+    app: auth
+  type: LoadBalancer
   ports:
-    - name: "8080"
-      port: 8080
-      targetPort: 8080
+    - name: "8081"
+      port: 8081
+      targetPort: 8081
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-financial
+  name: mysql-auth
   labels:
-    app: mysql-financial
+    app: mysql-auth
 spec:
   selector:
     matchLabels:
-      app: mysql-financial
+      app: mysql-auth
   template:
     metadata:
       labels:
-        app: mysql-financial
+        app: mysql-auth
     spec:
       containers:
-        - name: mysql-financial
+        - name: mysql-auth
           image: mysql
           ports:
             - containerPort: 3306
@@ -125,32 +129,32 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: secrets
-                  key: FINANCIAL_MYSQL_DATABASE
+                  key: AUTH_MYSQL_DATABASE
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: secrets
-                  key: FINANCIAL_MYSQL_PASSWORD
+                  key: AUTH_MYSQL_PASSWORD
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: secrets
-                  key: FINANCIAL_MYSQL_ROOT_PASSWORD
+                  key: AUTH_MYSQL_ROOT_PASSWORD
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
                   name: secrets
-                  key: FINANCIAL_MYSQL_USER
+                  key: AUTH_MYSQL_USER
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-financial
+  name: mysql-auth
   labels:
-    app: mysql-financial
+    app: mysql-auth
 spec:
   selector:
-    app: mysql-financial
+    app: mysql-auth
   ports:
     - protocol: TCP
       port: 3306
