@@ -24,9 +24,9 @@ public class ApiGatewayApplication {
         RouterFunctions.Builder routeBuilder = route("routes");
 
         return  routeBuilder
-                .build()
-                .andRoute(path("/activity/**"), http())
+                .route(path("/activity/**"), http())
                 .filter(lb("activity-service"))
+                .build()
                 .andRoute(path("/financial/**"), http())
                 .filter(lb("financial-service"))
                 .andRoute(path("/**"), http())
