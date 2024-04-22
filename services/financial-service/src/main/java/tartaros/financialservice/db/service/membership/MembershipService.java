@@ -18,5 +18,5 @@ public interface MembershipService {
 
     void deleteMembershipById(UUID membershipId);
 
-    void doTransaction(Membership membership, MembershipType membershipType);
+    void createTransactionFromMembership(Membership membership, MembershipType membershipType);
 }

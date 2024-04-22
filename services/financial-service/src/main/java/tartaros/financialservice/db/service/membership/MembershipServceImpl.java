@@ -24,10 +24,10 @@ public class MembershipServceImpl implements MembershipService {
 
     @Override
     public Membership createMembership(Membership membership) {
-        MembershipType membershipType = membershipTypeService.fetchMembershipTypeById(membership.getMembershipType());
+        MembershipType membershipType = membershipTypeService.fetchMembershipTypeById(membership.getMembershipTypeId());
         membershipType.getMemberships().add(membership);
         membership.setNextPaymentDate(LocalDateTime.now().plusSeconds(membershipType.getDuration()));
-        doTransaction(membership, membershipType);
+        createTransactionFromMembership(membership, membershipType);
         membershipTypeService.saveMembershipType(membershipType);
         return membershipRepository.save(membership);
     }
@@ -55,7 +55,7 @@ public class MembershipServceImpl implements MembershipService {
     }
 
     @Override
-    public void doTransaction(Membership membership, MembershipType membershipType) {
+    public void createTransactionFromMembership(Membership membership, MembershipType membershipType) {
         Transaction t = new Transaction();
         t.setAmount(membershipType.getPrice());
         t.setMemberEmail(membership.getMemberEmail());

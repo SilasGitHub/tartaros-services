@@ -6,3 +6,5 @@ kubectl apply -f activity.yaml
 kubectl apply -f rabbitmq.yaml
 kubectl apply -f ui.yaml
 kubectl apply -f google.yaml
+kubectl apply -f auth.yaml
+kubectl apply -f secrets.yaml
