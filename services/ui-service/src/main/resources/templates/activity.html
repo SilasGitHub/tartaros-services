@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tartaros activity details page</title>
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1>Activity: <span th:text="${activity.title}"></span></h1>
+<p><strong>Description:</strong> <span th:text="${activity.description}"></span></p>
+<p><strong>Price:</strong> <span th:text="'€' + ${#numbers.formatDecimal(activity.price, 0, 'COMMA', 2, 'POINT')}"></span></p>
+<p><strong>Starts at:</strong> <span th:text="${#temporals.format(activity.activityStartDate, 'dd-MM-yyyy, HH:mm')}"></span></p>
+<p><strong>Ends at:</strong> <span th:text="${#temporals.format(activity.activityEndDate, 'dd-MM-yyyy, HH:mm')}"></span></p>
+<p><strong>Sign up deadline:</strong> <span th:text="${#temporals.format(activity.signUpDeadline, 'dd-MM-yyyy, HH:mm')}"></span></p>
+<p th:if="${#strings.isEmpty(responseId) and !deadlinePassed and !participantsLimitReached}">Sign up <a th:href="'https://docs.google.com/forms/d/' + ${activity.externalId}">here!</a></p>
+<div th:unless="${#strings.isEmpty(responseId)}">
+    <p>You have signed up for this activity.</p>
+    <form id="delete-response" th:action="'/activity/' + ${activity.activityId} + '/response/' + ${responseId}">
+        <input th:unless="${deadlinePassed}" type="submit" value="Cancel" />
+    </form>
+</div>
+<div th:if="${participantsLimitReached and !deadlinePassed and #strings.isEmpty(responseId)}">
+    <p>Participants limit has been reached, so you can no longer sign up.</p>
+</div>
+<div th:if="${deadlinePassed and #strings.isEmpty(responseId)}">
+    <p>Sign up deadline has passed, so you can no longer sign up.</p>
+</div>
+<h1>Current signups</h1>
+<div th:unless="${#lists.isEmpty(responses)}">
+    <table>
+        <tr>
+            <th th:each="question : ${questions}" th:text="${question.title}"></th>
+        </tr>
+        <tr th:each="response : ${responses}">
+            <td th:each="answer : ${response}" th:text="${answer.answer}"></td>
+        </tr>
+    </table>
+</div>
+<div th:if="${#lists.isEmpty(responses)}">
+    <p>No signups yet.</p>
+</div>
+<br>
+<form method="POST" action="/logout">
+    <input type="submit" value="LOGOUT" />
+</form>
+<script>
+    var cancelResponse = document.getElementById("delete-response");
+    cancelResponse.addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(cancelResponse.action, {
+            method: 'DELETE'
+        }).then(function(response) {
+            if (response.ok) {
+                window.location.reload();
+            }
+        });
+    });
+</script>
+</body>
+</html>

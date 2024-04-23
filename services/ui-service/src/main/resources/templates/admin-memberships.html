@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tartaros membership page</title>
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1>Create a new membership</h1>
+<form id="create-membership" th:action="'/financial/membership'">
+    <p>
+        <label for="membershipType">Membership type:</label>
+        <select id="membershipType" name="membershipType" required>
+            <option th:each="membershipType: ${membershipTypes}" th:value="${membershipType.membershipTypeId}" th:text="${membershipType.name}"></option>
+        </select>
+    </p>
+    <p>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Email" required/>
+    </p>
+    <p>
+        <label for="startDate">Start date:</label>
+        <input type="date" id="startDate" name="startDate" required/>
+    </p>
+    <p>
+        <label for="endDate">End date:</label>
+        <input type="date" id="endDate" name="endDate"/>
+    </p>
+    <p><input type="submit" value="Create"/><input type="reset" value="Reset"/></p>
+</form>
+<h1>Existing memberships</h1>
+<div th:if="${#lists.isEmpty(memberships)}">
+    <p>No memberships found</p>
+</div>
+<div th:unless="${#lists.isEmpty(memberships)}">
+    <table>
+        <tr>
+            <th>Membership type</th>
+            <th>Member</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th>Next payment date</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+        <tr th:each="membership: ${memberships}">
+            <td th:text="${membership.membershipType.name}"></td>
+            <td th:text="${membership.memberEmail}"></td>
+            <td th:text="${#temporals.format(membership.startDate, 'dd-MM-yyyy')}"></td>
+            <td th:text="${#temporals.format(membership.endDate, 'dd-MM-yyyy')}"></td>
+            <td th:text="${#temporals.format(membership.nextPaymentDate, 'dd-MM-yyyy')}"></td>
+            <td th:text="'€' + ${#numbers.formatDecimal(membership.membershipType.price, 0, 'COMMA', 2, 'POINT')}"></td>
+            <td>
+                <form class="delete-membership" th:id="'delete-membership-' + ${membership.membershipId}" th:action="'/financial/membership/' + ${membership.membershipId}">
+                    <input type="submit" value="Delete"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+<br>
+<form method="POST" action="/logout">
+    <input type="submit" value="LOGOUT" />
+</form>
+<script>
+    var createMembership = document.getElementById("create-membership");
+    createMembership.addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(createMembership.action, {
+            method: 'POST',
+            body: JSON.stringify(
+                {
+                    membershipTypeId: createMembership.membershipType.value,
+                    memberEmail: createMembership.email.value,
+                    startDate: new Date(createMembership.startDate.value).toISOString(),
+                    endDate: createMembership.endDate.value !== "" ? new Date(createMembership.endDate.value).toISOString() : null
+                }
+            ),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            if (response.ok) {
+                window.location.reload();
+            }
+        });
+    });
+    var deleteMemberships = document.getElementsByClassName("delete-membership");
+    for (var i = 0; i < deleteMemberships.length; i++) {
+        deleteMemberships[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch(this.action, {
+                method: 'DELETE'
+            }).then(function(response) {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to delete membership');
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>

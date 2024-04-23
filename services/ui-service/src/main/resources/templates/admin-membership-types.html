@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tartaros membership types page</title>
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1>Create a new membership type</h1>
+<form id="create-membership-types" th:action="'/financial/membershipType'">
+    <p>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" placeholder="Name" required/>
+    </p>
+    <p>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" placeholder="Price" step="0.01" min="0" required/>
+    </p>
+    <p>
+        <label for="duration">Duration in months:</label>
+        <input type="number" id="duration" name="duration" min="0" value=12 required />
+    </p>
+    <p><input type="submit" value="Create"/><input type="reset" value="Reset"/></p>
+</form>
+<h1>Existing membership types</h1>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Duration in months</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="membershipType: ${membershipTypes}">
+        <td th:text="${membershipType.name}"></td>
+        <td th:text="${membershipType.price}"></td>
+        <td th:text="${membershipType.duration}"></td>
+        <td>
+            <form id="delete-membership-type" th:action="'/financial/membershipType/' + ${membershipType.membershipTypeId}">
+                <input type="submit" value="Delete"/>
+            </form>
+        </td>
+    </tr>
+</table>
+<br>
+<form method="POST" action="/logout">
+    <input type="submit" value="LOGOUT" />
+</form>
+<script>
+    var createMembershipType = document.getElementById("create-membership-types");
+    createMembershipType.addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(createMembershipType.action, {
+            method: 'POST',
+            body: JSON.stringify(
+                {
+                    name: createMembershipType.name.value,
+                    price: createMembershipType.price.value,
+                    duration: createMembershipType.duration.value
+                }
+            ),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Failed to create membership type');
+            }
+        });
+    });
+
+    var deleteMembershipType = document.getElementById("delete-membership-type");
+    deleteMembershipType.addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(deleteMembershipType.action, {
+            method: 'DELETE'
+        }).then(function(response) {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Failed to delete membership type, check if no existing memberships are linked to this type.');
+            }
+        });
+    });
+</script>
+</body>
+</html>

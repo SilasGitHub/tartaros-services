@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tartaros admin activities page</title>
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1>Create a new activity</h1>
+<form id="create-activity" th:action="'/activity'">
+    <p>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" placeholder="Title" required/>
+    </p>
+    <p>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description"  rows="4" cols="50"> </textarea>
+    </p>
+    <p>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" placeholder="Price" step="0.01" min="0" required/>
+    </p>
+    <p>
+        <label for="maxParticipants">Max participants:</label>
+        <input type="number" id="maxParticipants" name="maxParticipants" min="0" value=10 />
+    </p>
+    <p>
+        <label for="activityStartDate">Activity start date:</label>
+        <input type="datetime-local" id="activityStartDate" name="activityStartDate" placeholder="Start date" />
+    </p>
+    <p>
+        <label for="activityEndDate">Activity end date:</label>
+        <input type="datetime-local" id="activityEndDate" name="activityEndDate" placeholder="End date"/>
+    </p>
+    <p>
+        <label for="signUpDeadline">Sign up deadline:</label>
+        <input type="datetime-local" id="signUpDeadline" name="signUpDeadline" placeholder="Sign up deadline"/>
+    </p>
+    <p><input type="submit" value="Create"/><input type="reset" value="Reset"/></p>
+</form>
+<h1>Existing activities</h1>
+<div th:if="${#lists.isEmpty(activities)}">
+    <p>No activities found.</p>
+</div>
+<div th:unless="${#lists.isEmpty(activities)}">
+    <ul>
+        <li th:each="activity: ${activities}">
+            <a th:href="'/admin/activities/' + ${activity.activityId}">
+                <span th:text="${activity.title}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<br>
+<form method="POST" action="/logout">
+    <input type="submit" value="LOGOUT" />
+</form>
+<script>
+    var createActivity = document.getElementById("create-activity");
+    createActivity.addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(createActivity.action, {
+            method: 'POST',
+            body: JSON.stringify(
+                {
+                    title: createActivity.title.value,
+                    description: createActivity.description.value,
+                    price: createActivity.price.value,
+                    maxParticipants: createActivity.maxParticipants.value,
+                    activityStartDate: new Date(createActivity.activityStartDate.value).toISOString(),
+                    activityEndDate: new Date(createActivity.activityEndDate.value).toISOString(),
+                    signUpDeadline: new Date(createActivity.signUpDeadline.value).toISOString()
+                }),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            })
+        .then(function(response) {
+            if (response.ok) {
+                return response.json();
+            }
+        }).then (function (activity) {
+            window.location.href = "/admin/activities/" + activity.activityId;
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tartaros admin activity page</title>
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1>Activity detail page</h1>
+<p>Create the signup form <a th:href="'https://docs.google.com/forms/d/' + ${activity.externalId}">here</a>.
+<p>Make sure to turn on 'collecting email addresses' in the settings, and refresh this page after a change.</p>
+
+<p>Update the activity information.</p>
+<form id="update-activity" th:action="'/activity/' + ${activity.activityId}">
+    <div th:unless="${#lists.isEmpty(questions)}">
+        <label for="visibleQuestion">Which question's answers should be visible to everyone?</label>
+        <br>
+        <select id="visibleQuestion" name="visibleQuestion" th:size="${#lists.size(questions)}" multiple>
+            <option th:each="question : ${questions}" th:selected="${#lists.contains(activity.visibleQuestions, question.getQuestionId())}" th:value="${question.getQuestionId()}"><span th:text="${question.getTitle()}"></span></option>
+        </select>
+        <br>
+        <p>Hold down the Ctrl (windows) / Command (Mac) button to select multiple questions.</p>
+    </div>
+    <p>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" th:value="${activity.title}"/>
+    </p>
+    <p>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description"  rows="4" cols="50" th:text="${activity.description}"></textarea>
+    </p>
+    <p>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" placeholder="Price" step="0.01" min="0" th:value="${activity.price}" />
+    </p>
+    <p>
+        <label for="maxParticipants">Max participants:</label>
+        <input type="number" id="maxParticipants" name="maxParticipants" min="0" th:value="${activity.maxParticipants}" />
+    </p>
+    <p>
+        <label for="activityStartDate">Activity start date:</label>
+        <input type="datetime-local" id="activityStartDate" name="activityStartDate" placeholder="Start date" th:value="${#temporals.format(activity.activityStartDate, 'YYYY-MM-dd') + 'T' + #temporals.format(activity.activityStartDate, 'hh:mm')}" />
+    </p>
+    <p>
+        <label for="activityEndDate">Activity end date:</label>
+        <input type="datetime-local" id="activityEndDate" name="activityEndDate" placeholder="End date" th:value="${#temporals.format(activity.activityEndDate, 'YYYY-MM-dd') + 'T' + #temporals.format(activity.activityEndDate, 'hh:mm')}" />
+    </p>
+    <p>
+        <label for="signUpDeadline">Sign up deadline:</label>
+        <input type="datetime-local" id="signUpDeadline" name="signUpDeadline" placeholder="Sign up deadline" th:value="${#temporals.format(activity.signUpDeadline, 'YYYY-MM-dd') + 'T' + #temporals.format(activity.signUpDeadline, 'hh:mm')}" />
+    </p>
+    <p>
+        <label for="externalId">External ID:</label>
+        <input type="text" id="externalId" name="externalId" th:value="${activity.externalId}" />
+    </p>
+    <p><input type="submit" value="Update"/><input type="reset" value="Reset"/></p>
+</form>
+<p>Or delete the activity:</p>
+<form id="delete-activity" th:action="'/activity/' + ${activity.activityId}">
+    <input type="submit" value="Delete" />
+</form>
+<h1>Current signups:</h1>
+<div th:unless="${#lists.isEmpty(responses)}">
+    <table>
+        <tr>
+            <th th:each="question : ${questions}" th:text="${question.title}"></th>
+        </tr>
+        <tr th:each="response : ${responses}">
+            <td th:each="answer : ${response}" th:text="${answer.answer}"></td>
+        </tr>
+    </table>
+</div>
+<div th:if="${#lists.isEmpty(responses)}">
+    <p>No signups yet.</p>
+</div>
+<br>
+<form method="POST" action="/logout">
+    <input type="submit" value="LOGOUT" />
+</form>
+<script>
+    var deleteActivity = document.getElementById("delete-activity");
+    deleteActivity.addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(deleteActivity.action, {
+            method: 'DELETE'
+        }).then(function(response) {
+            if (response.ok) {
+                window.location.href = "/admin/activities";
+            }
+        });
+    });
+    var updateActivity = document.getElementById("update-activity");
+    updateActivity.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var activity = {};
+            activity.title = updateActivity.title.value;
+            activity.description = updateActivity.description.value;
+            activity.price = updateActivity.price.value;
+            activity.maxParticipants = updateActivity.maxParticipants.value;
+            activity.activityStartDate = new Date(updateActivity.activityStartDate.value).toISOString();
+            activity.activityEndDate = new Date(updateActivity.activityEndDate.value).toISOString();
+            activity.signUpDeadline = new Date(updateActivity.signUpDeadline.value).toISOString();
+            activity.externalId = updateActivity.externalId.value;
+        if (updateActivity.querySelector('[name="visibleQuestion"]')) {
+            activity.visibleQuestions = [...updateActivity.querySelector('[name="visibleQuestion"]').children].map(c => c.selected ? c.getAttribute("value") : null).filter(x => x !== null);
+        }
+        fetch(updateActivity.action, {
+                method: 'PUT',
+                body: JSON.stringify(activity),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+        .then(function(response) {
+            if (response.ok) {
+                window.location.reload();
+            }
+        });
+    });
+</script>
+</body>
+</html>

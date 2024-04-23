@@ -14,7 +14,7 @@ public class AuthenticationConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((a) -> a
-                        .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/login/**", "/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(e -> e

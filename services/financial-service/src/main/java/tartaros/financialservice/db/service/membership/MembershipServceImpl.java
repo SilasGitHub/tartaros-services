@@ -10,7 +10,7 @@ import tartaros.financialservice.db.repository.MembershipRepository;
 import tartaros.financialservice.db.service.transaction.MembershipTransactionService;
 import tartaros.financialservice.db.service.transaction.TransactionService;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,20 +24,18 @@ public class MembershipServceImpl implements MembershipService {
 
     @Override
     public Membership createMembership(Membership membership) {
+        membership.setNextPaymentDate(membership.getStartDate());
+        membership = membershipRepository.save(membership);
         MembershipType membershipType = membershipTypeService.fetchMembershipTypeById(membership.getMembershipTypeId());
         membershipType.getMemberships().add(membership);
-        membership.setNextPaymentDate(LocalDateTime.now().plusSeconds(membershipType.getDuration()));
-        createTransactionFromMembership(membership, membershipType);
         membershipTypeService.saveMembershipType(membershipType);
-        return membershipRepository.save(membership);
+        return membership;
     }
 
     @Override
     public Membership saveMembership(Membership membership) {
         return membershipRepository.save(membership);
     }
-
-
 
     @Override
     public Membership fetchMembershipById(UUID membershipId) {
@@ -51,6 +49,8 @@ public class MembershipServceImpl implements MembershipService {
 
     @Override
     public void deleteMembershipById(UUID membershipId) {
+        Membership membership = membershipRepository.findById(membershipId).get();
+        membershipTypeService.fetchMembershipTypeById(membership.getMembershipTypeId()).getMemberships().remove(membership);
         membershipRepository.deleteById(membershipId);
     }
 
@@ -60,7 +60,7 @@ public class MembershipServceImpl implements MembershipService {
         t.setAmount(membershipType.getPrice());
         t.setMemberEmail(membership.getMemberEmail());
         t.setDescription(membershipType.getName());
-        t.setTransactionTime(LocalDateTime.now());
+        t.setTransactionTime(Instant.now());
         transactionService.saveTransaction(t);
         MembershipTransaction mt = new MembershipTransaction();
         mt.setMembershipTypeId(membershipType.getMembershipTypeId());

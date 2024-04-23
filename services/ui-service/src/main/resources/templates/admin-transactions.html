@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tartaros transactions page</title>
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1>Create a new transaction</h1>
+<form id="create-transaction" th:action="'/financial/transaction'">
+    <p>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Email" required/>
+    </p>
+    <p>
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" placeholder="Description" required/>
+    </p>
+    <p>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" placeholder="Amount" min="0" step="0.01" required/>
+    </p>
+    <p>
+        <label for="transactionTime">Transaction date:</label>
+        <input type="date" id="transactionTime" name="transactionTime" required/>
+    </p>
+    <p><input type="submit" value="Create"/><input type="reset" value="Reset"/></p>
+</form>
+
+<h1>General transactions</h1>
+<div th:if="${#lists.isEmpty(remainingTransactions)}">
+    <p>No general transactions found</p>
+</div>
+<div th:unless="${#lists.isEmpty(remainingTransactions)}">
+    <table>
+        <tr>
+            <th>Member</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Transaction date</th>
+            <th>Paid</th>
+            <th>Actions</th>
+        </tr>
+        <tr th:each="transaction: ${remainingTransactions}">
+            <td th:text="${transaction.memberEmail}"></td>
+            <td th:text="${transaction.description}"></td>
+            <td th:text="'€' + ${#numbers.formatDecimal(transaction.amount, 0, 'COMMA', 2, 'POINT')}"></td>
+            <td th:text="${#temporals.format(transaction.transactionTime, 'dd-MM-yyyy')}"></td>
+            <td th:text="${transaction.paid} ? 'Yes' : 'No'"></td>
+            <td>
+                <div style="display:flex">
+                    <form class="delete-transaction" th:id="'delete-transaction-' + ${transaction.transactionId}" th:action="'/financial/transaction/' + ${transaction.transactionId}">
+                        <input type="submit" value="Delete"/>
+                    </form>
+                    <form class="paid-transaction" th:id="'paid-transaction-' + ${transaction.transactionId}" th:action="'/financial/transaction/' + ${transaction.transactionId}">
+                        <input type="submit" value="Paid"/>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<h1>Activity transactions history</h1>
+<div th:if="${#lists.isEmpty(activityTransactions)}">
+    <p>No activity transactions found</p>
+</div>
+<div th:unless="${#lists.isEmpty(activityTransactions)}">
+    <table>
+        <tr>
+            <th>Activity</th>
+            <th>Member</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Transaction date</th>
+            <th>Paid</th>
+            <th>Actions</th>
+        </tr>
+        <tr th:each="activityTransaction: ${activityTransactions}">
+            <td th:text="${activityTransaction.activity.title}"></td>
+            <td th:text="${activityTransaction.transaction.memberEmail}"></td>
+            <td th:text="${activityTransaction.transaction.description}"></td>
+            <td th:text="'€' + ${#numbers.formatDecimal(activityTransaction.transaction.amount, 0, 'COMMA', 2, 'POINT')}"></td>
+            <td th:text="${#temporals.format(activityTransaction.transaction.transactionTime, 'dd-MM-yyyy')}"></td>
+            <td th:text="${activityTransaction.transaction.paid} ? 'Yes' : 'No'"></td>
+            <td>
+                <div style="display:flex">
+                    <form class="delete-transaction" th:id="'delete-activity-transaction-' + ${activityTransaction.activityTransactionId}" th:action="'/financial/transaction/' + ${activityTransaction.transaction.transactionId}">
+                        <input type="submit" value="Delete"/>
+                    </form>
+                    <form class="paid-transaction" th:id="'paid-activity-transaction-' + ${activityTransaction.activityTransactionId}" th:action="'/financial/transaction/' + ${activityTransaction.transaction.transactionId}">
+                        <input type="submit" value="Paid"/>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<h1>Membership transactions history</h1>
+<div th:if="${#lists.isEmpty(membershipTransactions)}">
+    <p>No membership transactions found</p>
+</div>
+<div th:unless="${#lists.isEmpty(membershipTransactions)}">
+    <table>
+        <tr>
+            <th>Membership</th>
+            <th>Member</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Transaction date</th>
+            <th>Paid</th>
+            <th>Actions</th>
+        </tr>
+        <tr th:each="membershipTransaction: ${membershipTransactions}">
+            <td th:text="${membershipTransaction.membershipType.name}"></td>
+            <td th:text="${membershipTransaction.transaction.memberEmail}"></td>
+            <td th:text="${membershipTransaction.transaction.description}"></td>
+            <td th:text="'€' + ${#numbers.formatDecimal(membershipTransaction.transaction.amount, 0, 'COMMA', 2, 'POINT')}"></td>
+            <td th:text="${#temporals.format(membershipTransaction.transaction.transactionTime, 'dd-MM-yyyy')}"></td>
+            <td th:text="${membershipTransaction.transaction.paid} ? 'Yes' : 'No'"></td>
+            <td>
+                <div style="display:flex">
+                    <form class="delete-transaction" th:id="'delete-membership-transaction-' + ${membershipTransaction.membershipTransactionId}" th:action="'/financial/transaction/' + ${membershipTransaction.transaction.transactionId}">
+                        <input type="submit" value="Delete"/>
+                    </form>
+                    <form class="paid-transaction" th:id="'paid-membership-transaction-' + ${membershipTransaction.membershipTransactionId}" th:action="'/financial/transaction/' + ${membershipTransaction.transaction.transactionId}">
+                        <input type="submit" value="Paid"/>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<br>
+<form method="POST" action="/logout">
+    <input type="submit" value="LOGOUT" />
+</form>
+<script>
+    var createTransaction = document.getElementById("create-transaction");
+    createTransaction.addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(createTransaction.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    memberEmail: createTransaction.email.value,
+                    description: createTransaction.description.value,
+                    amount: createTransaction.amount.value,
+                    transactionTime: new Date(createTransaction.transactionTime.value).toISOString()
+                }
+            )
+        }).then(function(response) {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Failed to create transaction');
+            }
+        });
+    });
+
+    var paidTransactionForms = document.getElementsByClassName("paid-transaction");
+    for (var i = 0; i < paidTransactionForms.length; i++) {
+        paidTransactionForms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch(event.target.action, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        paid: true
+                    }
+                )
+            }).then(function(response) {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to mark transaction as paid');
+                }
+            });
+        });
+    }
+
+    var deleteTransactionForms = document.getElementsByClassName("delete-transaction");
+    for (var i = 0; i < deleteTransactionForms.length; i++) {
+        deleteTransactionForms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch(event.target.action, {
+                method: 'DELETE'
+            }).then(function(response) {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to delete transaction');
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>

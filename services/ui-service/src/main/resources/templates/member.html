@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member view</title>
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1>Welcome <span th:text="${name}"></span>!</h1>
+<ul>
+    <li>Check out and sign up to some nice <a href="/activities">activities</a>.</li>
+    <li>Get an overview of your <a href="/financials">financial history</a> on the site.</li>
+</ul>
+<div th:if="${isAdmin}">
+    <p>As an admin you can also:</p>
+    <ul>
+        <li><a href="/admin/activities">Create and manage activities</a></li>
+        <li><a href="/admin/membershipTypes">Create and manage membership types</a></li>
+        <li><a href="/admin/memberships">Create and manage memberships</a></li>
+        <li><a href="/admin/transactions">Create and manage transactions</a></li>
+    </ul>
+</div>
+<br>
+<form method="POST" action="/logout">
+    <input type="submit" value="LOGOUT" />
+</form>
+</body>
+</html>

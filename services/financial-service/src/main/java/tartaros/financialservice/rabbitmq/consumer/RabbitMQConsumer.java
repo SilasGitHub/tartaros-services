@@ -9,14 +9,13 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tartaros.financialservice.db.entity.ActivityTransaction;
-import tartaros.financialservice.db.entity.Transaction;
 import tartaros.financialservice.db.entity.TransactionWrapper;
 import tartaros.financialservice.db.entity.WebshopTransaction;
 import tartaros.financialservice.db.service.transaction.ActivityTransactionServiceImpl;
 import tartaros.financialservice.db.service.transaction.TransactionServiceImpl;
 import tartaros.financialservice.db.service.transaction.WebshopTransactionService;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Service
 public class RabbitMQConsumer {
@@ -34,7 +33,7 @@ public class RabbitMQConsumer {
     @RabbitListener(queues = "${rabbitmq.queue.name}")
     public void consumeMessage(TransactionWrapper t) {
         ObjectMapper mapper = new JsonMapper();
-        t.getTransaction().setTransactionTime(LocalDateTime.now());
+        t.getTransaction().setTransactionTime(Instant.now());
         transactionService.saveTransaction(t.getTransaction());
         if (t.getTransaction_type().get("type").asText().equals("activity")) {
             try {
