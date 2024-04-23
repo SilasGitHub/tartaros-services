@@ -31,11 +31,11 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: PORT_DISCOVERY
-          image: dockjoep/tartaros-services:gateway
+          image: localhost/api-gateway:latest
           name: gateway
           ports:
             - containerPort: 8080
-          imagePullPolicy: Always
+          imagePullPolicy: Never
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

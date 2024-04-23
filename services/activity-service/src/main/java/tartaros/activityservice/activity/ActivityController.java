@@ -247,6 +247,8 @@ class ActivityController {
                         activity.getSignUpDeadline().isBefore(Instant.now()) &&
                         !activity.isProcessed());
         for (Activity activity : activities.toIterable()) {
+            activity.setProcessed(true);
+            activityRepository.save(activity);
             LOGGER.info("Processing activity: " + activity.getTitle());
             List<FormResponse> responses = googleClient.getResponses(activity.getExternalId());
             if (responses == null) {
@@ -264,7 +266,6 @@ class ActivityController {
                 transaction.setAmount(activity.getPrice());
                 transaction.setMemberEmail(response.getRespondentEmail());
                 transaction.setDescription("Participation fee for activity: " + activity.getTitle());
-                transaction.setPaid(false);
                 TransactionType transactionType = new TransactionType();
                 transactionType.setActivityId(activity.getActivityId());
                 TransactionWrapper transactionWrapper = new TransactionWrapper();
@@ -272,8 +273,6 @@ class ActivityController {
                 transactionWrapper.setTransaction_type(transactionType);
                 producer.sendTransaction(transactionWrapper);
             }
-            activity.setProcessed(true);
-            activityRepository.save(activity);
         }
     }
 }

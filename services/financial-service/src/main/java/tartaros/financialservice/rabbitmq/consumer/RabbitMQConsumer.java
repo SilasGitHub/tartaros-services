@@ -16,6 +16,8 @@ import tartaros.financialservice.db.service.transaction.ActivityTransactionServi
 import tartaros.financialservice.db.service.transaction.TransactionServiceImpl;
 import tartaros.financialservice.db.service.transaction.WebshopTransactionService;
 
+import java.time.LocalDateTime;
+
 @Service
 public class RabbitMQConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumer.class);
@@ -31,10 +33,10 @@ public class RabbitMQConsumer {
 
     @RabbitListener(queues = "${rabbitmq.queue.name}")
     public void consumeMessage(TransactionWrapper t) {
+        ObjectMapper mapper = new JsonMapper();
+        t.getTransaction().setTransactionTime(LocalDateTime.now());
         transactionService.saveTransaction(t.getTransaction());
-
         if (t.getTransaction_type().get("type").asText().equals("activity")) {
-            ObjectMapper mapper = new JsonMapper();
             try {
                 ActivityTransaction activityTransaction = mapper.treeToValue(t.getTransaction_type(), ActivityTransaction.class);
                 activityTransaction.setTransaction(t.getTransaction());
@@ -45,7 +47,6 @@ public class RabbitMQConsumer {
         }
 
         if (t.getTransaction_type().get("type").asText().equals("webshop")) {
-            ObjectMapper mapper = new JsonMapper();
             try {
                 WebshopTransaction webshopTransaction = mapper.treeToValue(t.getTransaction_type(), WebshopTransaction.class);
                 webshopTransaction.setTransaction(t.getTransaction());

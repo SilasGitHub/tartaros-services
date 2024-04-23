@@ -14,11 +14,11 @@ spec:
         app: discovery
     spec:
       containers:
-        - image: dockjoep/tartaros-services:discovery
+        - image: localhost/discovery-service:latest
           name: services-discovery
           ports:
             - containerPort: 8761
-          imagePullPolicy: Always
+          imagePullPolicy: Never
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

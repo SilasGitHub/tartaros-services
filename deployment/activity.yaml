@@ -79,9 +79,9 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: JWT_PUBLIC_KEY
-          image: dockjoep/tartaros-services:activity
+          image: localhost/activity-service:latest
           name: activity
-          imagePullPolicy: Always
+          imagePullPolicy: Never
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always
