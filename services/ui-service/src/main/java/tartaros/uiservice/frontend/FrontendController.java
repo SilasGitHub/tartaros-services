@@ -32,6 +32,12 @@ public class FrontendController {
     @Value("${port.gateway}")
     private String gatewayPort;
 
+    @Value("${auth.host}")
+    private String authHost;
+
+    @Value("${auth.port}")
+    private String authPort;
+
     @Autowired
     private ActivityClient activityClient;
 
@@ -42,6 +48,8 @@ public class FrontendController {
     public String index(@CookieValue(name="jwt", defaultValue = "") String token, Model model) {
         boolean loggedIn = Authentication.verifyAuthentication(token, false);
         if (!loggedIn) {
+            model.addAttribute("authHost", authHost);
+            model.addAttribute("authPort", authPort);
             return "index";
         }
 
@@ -235,7 +243,12 @@ public class FrontendController {
             activitiesMap.put(activity.getActivityId(), activity);
         }
         for (ActivityTransaction activityTransaction : activityTransactions) {
-            activityTransaction.setActivity(activitiesMap.get(activityTransaction.getActivityId()));
+            Activity activity = activitiesMap.get(activityTransaction.getActivityId());
+            if (activity == null) {
+                activity = new Activity();
+                activity.setTitle("Deleted");
+            }
+            activityTransaction.setActivity(activity);
         }
 
         Set<UUID> transactionIds = membershipTransactions.stream().map(mt -> mt.getTransaction().getTransactionId()).collect(Collectors.toSet());
