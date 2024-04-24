@@ -7,6 +7,6 @@
 </head>
 <body>
 <h1>Welcome to the Tartaros website!</h1>
-<p>You are not logged in, please do so <a href="http://localhost:8081/oauth2/authorization/google">here</a>.</p>
+<p>You are not logged in, please do so <a th:href="'http://' + ${authHost} + ':' + ${authPort} + '/oauth2/authorization/google'">here</a>.</p>
 </body>
 </html>
