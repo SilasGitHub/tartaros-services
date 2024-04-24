@@ -32,10 +32,10 @@ public class FrontendController {
     @Value("${port.gateway}")
     private String gatewayPort;
 
-    @Value("${auth.host}")
+    @Value("${authHost}")
     private String authHost;
 
-    @Value("${auth.port}")
+    @Value("${authPort}")
     private String authPort;
 
     @Autowired
