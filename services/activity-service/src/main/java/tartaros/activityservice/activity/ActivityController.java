@@ -4,7 +4,6 @@ import com.google.api.services.forms.v1.model.FormResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import tartaros.activityservice.authentication.Authentication;
 import tartaros.activityservice.authentication.JwtClaims;
+import tartaros.activityservice.feign.GoogleClient;
+import tartaros.activityservice.model.FormQuestion;
 import tartaros.activityservice.rabbitmq.publisher.RabbitMQProducer;
 import tartaros.activityservice.transaction.Transaction;
 import tartaros.activityservice.transaction.TransactionType;
@@ -23,7 +24,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@EnableFeignClients
 @RequestMapping("/activity")
 class ActivityController {
 
@@ -124,7 +124,7 @@ class ActivityController {
         // Filter out the responses that were marked as deleted
         responses = responses.stream().filter(response -> !activity.get().getDeletedResponses().contains(response.getResponseId())).toList();
 
-        List<String> visibleQuestions = activity.get().getVisibileQuestions();
+        List<String> visibleQuestions = activity.get().getVisibleQuestions();
 
         JwtClaims claims = Authentication.getClaims(token);
         if (!claims.isAdmin()) {
@@ -165,6 +165,12 @@ class ActivityController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Activity not found");
         }
         Activity updatedActivity = activityOptional.get();
+        if (activity.getTitle() != null) {
+            updatedActivity.setTitle(activity.getTitle());
+        }
+        if (activity.getDescription() != null) {
+            updatedActivity.setDescription(activity.getDescription());
+        }
         if (activity.getActivityStartDate() != null) {
             updatedActivity.setActivityStartDate(activity.getActivityStartDate());
         }
@@ -183,11 +189,14 @@ class ActivityController {
         if (activity.getPrice() != null) {
             updatedActivity.setPrice(activity.getPrice());
         }
+        if (activity.getExternalId() != null) {
+            updatedActivity.setExternalId(activity.getExternalId());
+        }
         if (activity.getSignUpDeadline() != null) {
             updatedActivity.setSignUpDeadline(activity.getSignUpDeadline());
         }
-        if (activity.getVisibileQuestions() != null) {
-            updatedActivity.setVisibileQuestions(activity.getVisibileQuestions());
+        if (activity.getVisibleQuestions() != null) {
+            updatedActivity.setVisibleQuestions(activity.getVisibleQuestions());
         }
         activityRepository.save(updatedActivity);
         return updatedActivity;
@@ -204,6 +213,29 @@ class ActivityController {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Activity not found");
         }
+    }
+
+    @GetMapping("/{activityId}/signup")
+    public String hasSignedUp(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable("activityId") UUID activityId, @RequestParam("email") String email) {
+        if (!Authentication.verifyAuthentication(token, false)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
+
+        // Only allow non-admins to check their own signups
+        JwtClaims claims = Authentication.getClaims(token);
+        if (!claims.isAdmin() && !claims.getEmail().equals(email)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
+        }
+
+        Optional<Activity> activity = activityRepository.findById(activityId);
+        if (activity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Activity not found");
+        }
+        List<FormResponse> responses = googleClient.getResponses(activity.get().getExternalId());
+        if (responses == null) {
+            return null;
+        }
+        return responses.stream().filter(response -> response.getRespondentEmail().equals(email) && !activity.get().getDeletedResponses().contains(response.getResponseId())).findFirst().map(FormResponse::getResponseId).orElse(null);
     }
 
     @DeleteMapping("/{activityId}/response/{responseId}")

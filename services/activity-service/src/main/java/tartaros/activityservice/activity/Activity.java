@@ -55,7 +55,7 @@ public class Activity {
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "Activity_VisibleQuestion", joinColumns = @JoinColumn(name = "activity_id"))
     @Column(name = "visibleQuestion", nullable = false)
-    private List<String> visibileQuestions = new ArrayList<>();
+    private List<String> visibleQuestions = new ArrayList<>();
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "Activity_DeletedQuestion", joinColumns = @JoinColumn(name = "activity_id"))

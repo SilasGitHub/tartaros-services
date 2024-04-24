@@ -2,10 +2,10 @@ package tartaros.financialservice.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.io.Serializable;
-import java.sql.Date;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -20,11 +20,14 @@ public class Transaction implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "transaction_id")
     private UUID transactionId;
+    @NotNull
     private String memberEmail;
+    @NotNull
     private Double amount;
+    @NotNull
     private String description;
     private boolean paid = false;
-    private LocalDateTime transactionTime;
-
+    @NotNull
+    private Instant transactionTime;
 }
 

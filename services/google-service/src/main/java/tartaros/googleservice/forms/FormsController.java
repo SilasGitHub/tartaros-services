@@ -7,6 +7,8 @@ import com.google.auth.oauth2.GoogleCredentials;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static tartaros.googleservice.forms.Boilerplate.driveService;
@@ -40,7 +42,9 @@ public class FormsController {
     @GetMapping("/{id}/questions")
     private static Iterable<Item> getQuestions(@PathVariable("id") String formId) throws IOException {
         Form form = formsService.forms().get(formId).setAccessToken(token).execute();
-        return form.getItems().stream().filter((it) -> !it.getQuestionItem().isEmpty()).toList();
+        List<Item> items = form.getItems();
+        if (items == null) return new ArrayList<>();
+        return items.stream().filter((it) -> it.getQuestionItem() != null && !it.getQuestionItem().isEmpty()).toList();
     }
 
     @PostMapping("/{createdBy}")

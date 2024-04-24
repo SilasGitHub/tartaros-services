@@ -3,6 +3,7 @@ package tartaros.financialservice.db.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.UUID;
 
@@ -22,6 +23,6 @@ public class ActivityTransaction {
     @Id
     @GeneratedValue
     private UUID activityTransactionId;
-
+    @NotNull
     private UUID activityId;
 }

@@ -1,12 +1,10 @@
 package tartaros.financialservice.db.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.antlr.v4.runtime.misc.NotNull;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +18,12 @@ public class Membership {
     @Id
     @GeneratedValue
     private UUID membershipId;
-    private String memberEmail;
+    @NotNull
     private UUID membershipTypeId;
-    private LocalDateTime nextPaymentDate;
+    @NotNull
+    private String memberEmail;
+    private Instant nextPaymentDate;
+    @NotNull
+    private Instant startDate;
+    private Instant endDate;
 }

@@ -18,7 +18,7 @@ import tartaros.financialservice.db.service.transaction.MembershipTransactionSer
 import tartaros.financialservice.db.service.transaction.TransactionService;
 import tartaros.financialservice.db.service.transaction.WebshopTransactionService;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +32,6 @@ public class FinancialController {
     @Autowired private MembershipTransactionService membershipTransactionService;
     @Autowired private MembershipService membershipService;
     @Autowired private MembershipTypeService membershipTypeService;
-
 
     @GetMapping("/transaction")
     public List<Transaction> getAllTransactions(@CookieValue(name="jwt", defaultValue = "") String token) {
@@ -51,12 +50,12 @@ public class FinancialController {
         return transactions;
     }
 
-    @PostMapping("/transaction/activity")
-    public Transaction createActivityTransaction(@CookieValue(name="jwt", defaultValue = "") String token, @RequestBody Transaction transaction) {
+    @PostMapping("/transaction")
+    public Transaction createTransaction(@CookieValue(name="jwt", defaultValue = "") String token, @RequestBody Transaction transaction) {
         if (!Authentication.verifyAuthentication(token, true)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
         }
-        transaction.setTransactionTime(LocalDateTime.now());
+        transaction.setTransactionTime(Instant.now());
         transaction = transactionService.saveTransaction(transaction);
         return transaction;
     }
@@ -104,7 +103,7 @@ public class FinancialController {
 
 
     @DeleteMapping("/transaction/{transactionId}")
-    public ResponseEntity deleteTransactionById(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable UUID transactionId) {
+    public void deleteTransactionById(@CookieValue(name="jwt", defaultValue = "") String token, @PathVariable UUID transactionId) {
         if (!Authentication.verifyAuthentication(token, true)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
         }
@@ -124,15 +123,23 @@ public class FinancialController {
             }
         }
         transactionService.deleteTransactionById(transactionId);
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/membership")
     public List<Membership> getAllMemberships(@CookieValue(name="jwt", defaultValue = "") String token) {
-        if (!Authentication.verifyAuthentication(token, true)) {
+        if (!Authentication.verifyAuthentication(token, false)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
         }
-        return membershipService.fetchMembershipList();
+
+        List<Membership> memberships = membershipService.fetchMembershipList();
+
+        // non-admins can only see their own memberships
+        JwtClaims claims = Authentication.getClaims(token);
+        if (!claims.isAdmin()) {
+            memberships = memberships.stream().filter(t -> t.getMemberEmail().equals(claims.getEmail())).toList();
+        }
+
+        return memberships;
     }
 
     @PostMapping("/membership")
@@ -153,7 +160,7 @@ public class FinancialController {
 
     @GetMapping("/membershipType")
     public List<MembershipType> getAllMembershipTypes(@CookieValue(name="jwt", defaultValue = "") String token) {
-        if (!Authentication.verifyAuthentication(token, true)) {
+        if (!Authentication.verifyAuthentication(token, false)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
         }
         return membershipTypeService.fetchMembershipTypeList();
@@ -172,6 +179,10 @@ public class FinancialController {
         if (!Authentication.verifyAuthentication(token, true)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Invalid credentials");
         }
+        List<Membership> memberships = membershipService.fetchMembershipList();
+        if (memberships.stream().anyMatch(m -> m.getMembershipTypeId().equals(membershipTypeId))) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Membership type is in use");
+        }
         membershipTypeService.deleteMembershipTypeById(membershipTypeId);
     }
 
@@ -182,6 +193,4 @@ public class FinancialController {
         }
         return membershipTypeService.updateMembershipType(membershipType, membershipTypeId);
     }
-
-
 }

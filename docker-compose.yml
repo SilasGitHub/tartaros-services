@@ -31,13 +31,24 @@ services:
       test: [ "CMD", "curl" ,"-f", "discovery:${PORT_DISCOVERY:-8761}" ]
       timeout: 5s
       retries: 10
-  gateway:
+  api-gateway:
     depends_on:
       discovery:
         condition: service_healthy
     build: services/api-gateway
     ports:
       - "${PORT_API:-8080}:${PORT_API:-8080}"
+    environment:
+      <<: *common-env-vars
+  google-service:
+    depends_on:
+      discovery:
+        condition: service_healthy
+    build: services/google-service
+    healthcheck:
+      test: [ "CMD", "curl" ,"-f", "http://localhost:${PORT_API}" ]
+      timeout: 5s
+      retries: 10
     environment:
       <<: *common-env-vars
   mysql_activity:
@@ -53,13 +64,15 @@ services:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       timeout: 5s
       retries: 10
-  activity:
+  activity-service:
     depends_on:
       mysql_activity:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
       discovery:
+        condition: service_healthy
+      google-service:
         condition: service_healthy
     build: services/activity-service
     environment:
@@ -83,7 +96,7 @@ services:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       timeout: 5s
       retries: 10
-  financial:
+  financial-service:
     depends_on:
       mysql_financial:
         condition: service_healthy
@@ -100,14 +113,7 @@ services:
       MYSQL_PASSWORD: ${FINANCIAL_MYSQL_PASSWORD:-financial_password}
       RABBITMQ_PASS: ${RABBIT_MQ_PASS:-guest}
       RABBITMQ_USER: ${RABBIT_MQ_USER:-guest}
-  google:
-    depends_on:
-      discovery:
-        condition: service_healthy
-    build: services/google-service
-    environment:
-      <<: *common-env-vars
-  ui:
+  ui-service:
     depends_on:
       discovery:
         condition: service_healthy
@@ -127,7 +133,7 @@ services:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       timeout: 5s
       retries: 10
-  auth:
+  auth-service:
     depends_on:
       discovery:
         condition: service_healthy
