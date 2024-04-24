@@ -41,6 +41,16 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: JWT_PUBLIC_KEY
+            - name: AUTH_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: AUTH_HOST
+            - name: PORT_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: PORT_AUTH
           image: localhost/ui-service:latest
           name: ui
           imagePullPolicy: Never

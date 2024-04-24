@@ -1,0 +1,609 @@
+{
+	"info": {
+		"_postman_id": "41994671-2cdf-4b57-b4f4-ce92fbf70a1a",
+		"name": "Tartaros services",
+		"description": "Testing suite for Tartaros web services.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15544835"
+	},
+	"item": [
+		{
+			"name": "Activity",
+			"item": [
+				{
+					"name": "GetActivity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/activity/{{ActivityId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity",
+								"{{ActivityId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteActivity",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/activity/{{ActivityId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity",
+								"{{ActivityId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteActivityResponse",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/activity/5e337dc5-2bed-4da6-b463-ce2de52c0a28/response/ACYDBNj12i_GdjcUH1rSxVzxHZJwZFfxDxFmxg-Gaws_73j1KIOGFtGKZvW1YnjRRT-gfZc",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity",
+								"5e337dc5-2bed-4da6-b463-ce2de52c0a28",
+								"response",
+								"ACYDBNj12i_GdjcUH1rSxVzxHZJwZFfxDxFmxg-Gaws_73j1KIOGFtGKZvW1YnjRRT-gfZc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetActivityQuestions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/activity/{{ActivityId}}/questions",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity",
+								"{{ActivityId}}",
+								"questions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetActivityResponses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/activity/{{ActivityId}}/response",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity",
+								"{{ActivityId}}",
+								"response"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetActivityResponse",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/activity/{{ActivityId}}/response/{{ResponseId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity",
+								"{{ActivityId}}",
+								"response",
+								"{{ResponseId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/activity/{{ActivityId}}/signup?email=joepvorage@dssv-tartaros.nl",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity",
+								"{{ActivityId}}",
+								"signup"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "joepvorage@dssv-tartaros.nl"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateActivity",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"dc1e39e8-6831-4818-b42c-7113cd3ab7e7\",\n    \"title\": \"Activity!\",\n    \"description\": \"This is a fun activity!\",\n    \"committee\": \"isame\",\n    \"price\": 7.9,\n    \"maxParticipants\": 10,\n    \"signUpDeadline\": \"2024-04-23T21:45:50Z\",\n    \"activityStartDate\": \"2014-10-02T15:01:23Z\",\n    \"activityEndDate\": \"2014-10-02T15:01:23Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/activity",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateActivity",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Special activity!\",\n    \"visibileQuestions\": [\"709338f6\", \"60373a59\", \"32849ac7\", \"16465bdc\", \"3be29924\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/activity/{{ActivityId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity",
+								"{{ActivityId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetActivities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/activity",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activity"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Financial",
+			"item": [
+				{
+					"name": "GetTransactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/transaction",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"transaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetMemberships",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/membership",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"membership"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateMembership",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"membershipTypeId\" : \"2841fb25-b1ab-473d-9799-db9e0a13c215\",\n    \"memberEmail\" : \"joepdegraaf@dssv-tartaros.nl\",\n    \"startDate\" : \"2021-04-23T00:00:00.000000000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/financial/membership",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"membership"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteMembership",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/membership/{{MembershipId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"membership",
+								"{{MembershipId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteMembershipType",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/membershipType/{{MembershipTypeId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"membershipType",
+								"{{MembershipTypeId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateMembershipType",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"Semester member\",\n    \"price\" : 30.00,\n    \"duration\" : 12\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/financial/membershipType/{{MembershipTypeId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"membershipType",
+								"{{MembershipTypeId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetMembershipTypes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/membershipType",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"membershipType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateMembershipTypes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"Semester member\",\n    \"price\" : 30.00,\n    \"duration\" : 12\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/financial/membershipType",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"membershipType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetActivityTransactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/transaction/activity",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"transaction",
+								"activity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetWebshopTransactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/transaction/webshop",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"transaction",
+								"webshop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetMembershipTransactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/transaction/membership",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"transaction",
+								"membership"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTransaction",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/transaction/{{TransactionId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"transaction",
+								"{{TransactionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTransaction",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"memberEmail\" : \"silasdegraaf@dssv-tartaros.nl\",\n    \"amount\" : 99.00,\n    \"description\" : \"Transactie test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/financial/transaction/{{TransactionId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"transaction",
+								"{{TransactionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteTransaction",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/financial/transaction/{{TransactionId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"transaction",
+								"{{TransactionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateTransaction",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"memberEmail\" : \"silasdegraaf@dssv-tartaros.nl\",\n    \"amount\" : 69.69,\n    \"description\" : \"Transactie test 3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/financial/transaction",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"financial",
+								"transaction"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}
