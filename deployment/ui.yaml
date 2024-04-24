@@ -31,6 +31,16 @@ spec:
                 secretKeyRef:
                   name: secrets
                   key: PORT_DISCOVERY
+            - name: GATEWAY_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: GATEWAY_HOST
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: JWT_PUBLIC_KEY
           image: localhost/ui-service:latest
           name: ui
           imagePullPolicy: Never

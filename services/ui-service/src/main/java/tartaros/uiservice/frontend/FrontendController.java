@@ -29,7 +29,7 @@ public class FrontendController {
     @Value("${gateway.host}")
     private String gatewayHost;
 
-    @Value("${gateway.port}")
+    @Value("${port.gateway}")
     private String gatewayPort;
 
     @Autowired
